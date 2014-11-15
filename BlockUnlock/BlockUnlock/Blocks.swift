@@ -16,7 +16,7 @@ class ComplexBlock : SKSpriteNode {
         super.init(texture: nil, color: nil, size: CGSize(width: 100, height: 100));
         
         
-        let sprite = SKSpriteNode(imageNamed: "Spaceship");
+        let sprite = SKSpriteNode(imageNamed: "RedBlock");
         
         sprite.xScale = 0.5
         sprite.yScale = 0.5
@@ -24,8 +24,6 @@ class ComplexBlock : SKSpriteNode {
         
         
         self.addChild(sprite);
-        
-        NSLog("Heyoo");
         
     }
     

@@ -16,6 +16,10 @@
 		1A4217D51A17E884002C0925 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217D31A17E884002C0925 /* LaunchScreen.xib */; };
 		1A4217E11A17E884002C0925 /* BlockUnlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4217E01A17E884002C0925 /* BlockUnlockTests.swift */; };
 		1A4217EB1A180722002C0925 /* Blocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4217EA1A180722002C0925 /* Blocks.swift */; };
+		1A4217F01A1819FF002C0925 /* AND.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217EC1A1819FF002C0925 /* AND.png */; };
+		1A4217F11A1819FF002C0925 /* blueBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217ED1A1819FF002C0925 /* blueBlock.png */; };
+		1A4217F21A1819FF002C0925 /* OR.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217EE1A1819FF002C0925 /* OR.png */; };
+		1A4217F31A1819FF002C0925 /* redBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217EF1A1819FF002C0925 /* redBlock.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +46,10 @@
 		1A4217DF1A17E884002C0925 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A4217E01A17E884002C0925 /* BlockUnlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUnlockTests.swift; sourceTree = "<group>"; };
 		1A4217EA1A180722002C0925 /* Blocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blocks.swift; sourceTree = "<group>"; };
+		1A4217EC1A1819FF002C0925 /* AND.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AND.png; sourceTree = "<group>"; };
+		1A4217ED1A1819FF002C0925 /* blueBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueBlock.png; sourceTree = "<group>"; };
+		1A4217EE1A1819FF002C0925 /* OR.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OR.png; sourceTree = "<group>"; };
+		1A4217EF1A1819FF002C0925 /* redBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redBlock.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +98,10 @@
 				1A4217EA1A180722002C0925 /* Blocks.swift */,
 				1A4217CE1A17E884002C0925 /* Main.storyboard */,
 				1A4217D11A17E884002C0925 /* Images.xcassets */,
+				1A4217EC1A1819FF002C0925 /* AND.png */,
+				1A4217ED1A1819FF002C0925 /* blueBlock.png */,
+				1A4217EE1A1819FF002C0925 /* OR.png */,
+				1A4217EF1A1819FF002C0925 /* redBlock.png */,
 				1A4217D31A17E884002C0925 /* LaunchScreen.xib */,
 				1A4217C41A17E884002C0925 /* Supporting Files */,
 			);
@@ -202,7 +214,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A4217D51A17E884002C0925 /* LaunchScreen.xib in Resources */,
+				1A4217F11A1819FF002C0925 /* blueBlock.png in Resources */,
+				1A4217F21A1819FF002C0925 /* OR.png in Resources */,
 				1A4217D21A17E884002C0925 /* Images.xcassets in Resources */,
+				1A4217F01A1819FF002C0925 /* AND.png in Resources */,
+				1A4217F31A1819FF002C0925 /* redBlock.png in Resources */,
 				1A4217C91A17E884002C0925 /* GameScene.sks in Resources */,
 				1A4217D01A17E884002C0925 /* Main.storyboard in Resources */,
 			);
@@ -417,6 +433,7 @@
 				1A4217E61A17E884002C0925 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1A4217E71A17E884002C0925 /* Build configuration list for PBXNativeTarget "BlockUnlockTests" */ = {
 			isa = XCConfigurationList;
@@ -425,6 +442,7 @@
 				1A4217E91A17E884002C0925 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

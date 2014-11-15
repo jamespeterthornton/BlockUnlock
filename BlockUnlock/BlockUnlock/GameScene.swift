@@ -10,6 +10,8 @@ import SpriteKit
 
 var blocks: [SKSpriteNode] = [];
 
+var counter: Int = 0;
+
 class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -18,7 +20,6 @@ class GameScene: SKScene {
         myLabel.fontSize = 65;
         myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
         self.addChild(myLabel)
-        var timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("generateBlock"), userInfo: nil, repeats: true)
         
     }
 
@@ -37,36 +38,22 @@ class GameScene: SKScene {
         let connector = Connector(thisWriteable: true, thisValue: "OR");
         let simpleArray: [NSObject] = [trueNum, falseNum, connector]
         
-        NSLog("1");
-        
         let complexBlock = ComplexBlock(values: simpleArray);
-        
-        NSLog("2");
-        
         
         complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
         
         self.addChild(complexBlock);
         
         blocks.append(complexBlock);
-        
-       /* let sprite = SKSpriteNode(imageNamed: "Spaceship");
-        
-        sprite.xScale = 0.5
-        sprite.yScale = 0.5
-        sprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
-        
-        let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-        
-        sprite.runAction(SKAction.repeatActionForever(action))
-        
-        self.addChild(sprite)
-        
-        blocks.append(sprite); */
+
     }
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+        
+        if (counter == 100){ counter = 0;}
+        if (counter == 0){ generateBlock();}
+        counter++;
         
         for sprite in blocks {
             sprite.position.y -= 3;
