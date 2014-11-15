@@ -15,6 +15,7 @@
 		1A4217D21A17E884002C0925 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217D11A17E884002C0925 /* Images.xcassets */; };
 		1A4217D51A17E884002C0925 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217D31A17E884002C0925 /* LaunchScreen.xib */; };
 		1A4217E11A17E884002C0925 /* BlockUnlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4217E01A17E884002C0925 /* BlockUnlockTests.swift */; };
+		1A4217EB1A180722002C0925 /* Blocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4217EA1A180722002C0925 /* Blocks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		1A4217DA1A17E884002C0925 /* BlockUnlockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlockUnlockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A4217DF1A17E884002C0925 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A4217E01A17E884002C0925 /* BlockUnlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUnlockTests.swift; sourceTree = "<group>"; };
+		1A4217EA1A180722002C0925 /* Blocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blocks.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 				1A4217C81A17E884002C0925 /* GameScene.sks */,
 				1A4217CA1A17E884002C0925 /* GameScene.swift */,
 				1A4217CC1A17E884002C0925 /* GameViewController.swift */,
+				1A4217EA1A180722002C0925 /* Blocks.swift */,
 				1A4217CE1A17E884002C0925 /* Main.storyboard */,
 				1A4217D11A17E884002C0925 /* Images.xcassets */,
 				1A4217D31A17E884002C0925 /* LaunchScreen.xib */,
@@ -220,6 +223,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A4217CB1A17E884002C0925 /* GameScene.swift in Sources */,
+				1A4217EB1A180722002C0925 /* Blocks.swift in Sources */,
 				1A4217CD1A17E884002C0925 /* GameViewController.swift in Sources */,
 				1A4217C71A17E884002C0925 /* AppDelegate.swift in Sources */,
 			);

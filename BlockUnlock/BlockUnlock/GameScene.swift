@@ -32,7 +32,25 @@ class GameScene: SKScene {
     
     func generateBlock () {
         
-        let sprite = SKSpriteNode(imageNamed: "Spaceship");
+        let trueNum: NSNumber = 1;
+        let falseNum: NSNumber = 0;
+        let connector = Connector(thisWriteable: true, thisValue: "OR");
+        let simpleArray: [NSObject] = [trueNum, falseNum, connector]
+        
+        NSLog("1");
+        
+        let complexBlock = ComplexBlock(values: simpleArray);
+        
+        NSLog("2");
+        
+        
+        complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
+        
+        self.addChild(complexBlock);
+        
+        blocks.append(complexBlock);
+        
+       /* let sprite = SKSpriteNode(imageNamed: "Spaceship");
         
         sprite.xScale = 0.5
         sprite.yScale = 0.5
@@ -44,7 +62,7 @@ class GameScene: SKScene {
         
         self.addChild(sprite)
         
-        blocks.append(sprite);
+        blocks.append(sprite); */
     }
    
     override func update(currentTime: CFTimeInterval) {
