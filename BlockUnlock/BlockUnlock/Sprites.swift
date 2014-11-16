@@ -20,10 +20,7 @@ class ComplexBlock : SKSpriteNode {
     let blockHeight : CGFloat = 75
 
     var sprites : [SKSpriteNode] = []
-
     var exploded : Bool = false;
-
-    
     var values : [NSObject]
     
     /*
@@ -91,9 +88,7 @@ class ComplexBlock : SKSpriteNode {
         
     }
     
-    required init(coder: NSCoder) {
-        fatalError("NSCoding not supported")
-    }
+
  
     func hasExploded(){
         self.exploded = true
@@ -117,6 +112,7 @@ class ComplexBlock : SKSpriteNode {
                 sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame), CGRectGetMinY(self.frame));
                 xPlaceholder += sprite.frame.width
                 self.addChild(sprite)
+                sprites.append(sprite);
                 
             } else if let connector = object as? Connector {
                 
@@ -162,4 +158,28 @@ class ComplexBlock : SKSpriteNode {
         
     }
     
+    required init(coder: NSCoder) {
+        fatalError("NSCoding not supported")
+    }
+}
+
+class GameOverSprite : SKSpriteNode {
+    
+    init (spriteSize : CGSize) {
+        
+        let backgroundColor : UIColor = UIColor.blackColor().colorWithAlphaComponent(0.7);
+
+        
+        super.init(texture: nil, color: backgroundColor, size: spriteSize)
+        
+        let gameOverLabel : SKLabelNode = SKLabelNode()
+        gameOverLabel.fontSize = 50
+        gameOverLabel.text = "GAME OVER"
+        gameOverLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        self.addChild(gameOverLabel)
+    }
+    
+    required init(coder: NSCoder) {
+        fatalError("NSCoding not supported")
+    }
 }
