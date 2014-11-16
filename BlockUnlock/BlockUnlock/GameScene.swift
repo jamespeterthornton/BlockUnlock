@@ -34,7 +34,7 @@ class GameScene: SKScene {
     let evalLabel : SKLabelNode = SKLabelNode()
     
     let counterReset : Int = 150
-    let fallingSpeed : CGFloat = CGFloat(3)
+    let fallingSpeed : CGFloat = CGFloat(1)
     
 
     
