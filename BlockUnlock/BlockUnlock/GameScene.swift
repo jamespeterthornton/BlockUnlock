@@ -14,7 +14,7 @@ var blocks: [ComplexBlock] = []
 var targets: [Bool] = []
 var targetSprites : [SKSpriteNode] = []
 var counter: Int = 0
-let controlsHeight : CGFloat = 150
+let controlsHeight : CGFloat = 100
 let targetHeight : CGFloat = 75
 var gameOver : Bool = false
 var score : Int = 0
@@ -32,17 +32,14 @@ class GameScene: SKScene {
     var lastMoveEnd: CGPoint!
     let scoreLabel : SKLabelNode = SKLabelNode()
     let evalLabel : SKLabelNode = SKLabelNode()
+    
+    let counterReset : Int = 150
+    let fallingSpeed : CGFloat = CGFloat(3)
+    
 
     
     override func didMoveToView(view: SKView) {
         
-  /*      var myPath = CGPathCreateMutable()
-        CGPathMoveToPoint(myPath, nil, CGRectGetMaxX(self.frame), CGRectGetMinY(self.frame))
-        CGPathAddLineToPoint(myPath, nil, CGRectGetMinX(self.frame), CGRectGetMaxY(self.frame))
-        var shape = SKShapeNode(path:myPath)
-        shape.lineWidth = 1.0
-        shape.fillColor = UIColor.blackColor()
-        self.addChild(shape) */
         /* Setup your scene here */
         let andSprite = ThrowableConnector(imageName: "AND", size:SPRITESIZE)
         
@@ -55,6 +52,12 @@ class GameScene: SKScene {
         orSprite.position = CGPoint(x:CGRectGetMinX(self.frame) + 2*self.frame.width/3, y:CGRectGetMinY(self.frame) + controlsHeight/2)
         orSprite.zPosition = 20
         self.addChild(orSprite)
+        
+        let xorSprite = ThrowableConnector(imageName: "XOR", size: SPRITESIZE)
+        
+        xorSprite.position = CGPoint(x:CGRectGetMinX(self.frame) + self.frame.width/2, y:CGRectGetMinY(self.frame) + controlsHeight/2)
+        xorSprite.zPosition = 20
+        self.addChild(xorSprite)
         
         self.backgroundColor = UIColor.whiteColor()
         
@@ -71,12 +74,11 @@ class GameScene: SKScene {
         self.addChild(backgroundSprite)
 
         scoreLabel.text = "\(score)"
-        scoreLabel.position = CGPointMake(CGRectGetMidX(self.frame) - 80.0, CGRectGetMaxY(self.frame) - 40.0);
+        scoreLabel.fontColor = UIColor.blackColor()
+        scoreLabel.fontSize = 50
+        scoreLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame) - 60.0);
+        scoreLabel.zPosition = 1500;
         self.addChild(scoreLabel);
-        
-        evalLabel.text = "Nada"
-        evalLabel.position = CGPointMake(CGRectGetMidX(self.frame) - 80.0, CGRectGetMaxY(self.frame) - 40.0);
-        self.addChild(evalLabel);
         
     }
     
@@ -92,14 +94,19 @@ class GameScene: SKScene {
     
     func makeNewThrowable(type: String) -> ThrowableConnector{
         var newSprite:ThrowableConnector
-        if (type == "OR"){
-            newSprite = ThrowableConnector(imageName: "OR", size: CGSizeMake(30, 28))
+        if (type == "AND"){
+            newSprite = ThrowableConnector(imageName: "AND", size: SPRITESIZE)
+            newSprite.position = CGPoint(x:CGRectGetMinX(self.frame) + self.frame.width/3, y:CGRectGetMinY(self.frame) + controlsHeight/2)
+            newSprite.zPosition = 20
+            self.addChild(newSprite)
+        } else if (type == "OR") {
+            newSprite = ThrowableConnector(imageName: "OR", size: SPRITESIZE)
             newSprite.position = CGPoint(x:CGRectGetMinX(self.frame) + 2 * self.frame.width/3, y:CGRectGetMinY(self.frame) + controlsHeight/2)
             newSprite.zPosition = 20
             self.addChild(newSprite)
-        } else{
-            newSprite = ThrowableConnector(imageName: "AND", size: CGSizeMake(30, 28))
-            newSprite.position = CGPoint(x:CGRectGetMinX(self.frame) + self.frame.width/3, y:CGRectGetMinY(self.frame) + controlsHeight/2)
+        } else {
+            newSprite = ThrowableConnector(imageName: "XOR", size: SPRITESIZE)
+            newSprite.position = CGPoint(x:CGRectGetMinX(self.frame) + self.frame.width/2, y:CGRectGetMinY(self.frame) + controlsHeight/2)
             newSprite.zPosition = 20
             self.addChild(newSprite)
         }
@@ -151,9 +158,10 @@ class GameScene: SKScene {
     }
     
     func unselectSprite(){
-        self.tappedSprite = nil
+        self.tappedSprite.removeFromParent()
+//        self.tappedSprite = nil
     }
-    
+    /*
     override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
         for touch in touches{
             self.lastMoveEnd = touch.locationInNode(self)
@@ -171,45 +179,49 @@ class GameScene: SKScene {
                 else if (self.tappedSprite != nil){
                     let distance = GameScene.distance(self.lastMoveBegin, p2: self.lastMoveEnd)
                     
-                    let xdiff = ((self.lastMoveEnd.x - self.lastMoveBegin.x) / CGFloat(distance)) * 300
-                    let ydiff = ((self.lastMoveEnd.y - self.lastMoveBegin.y) / CGFloat(distance)) * 300
+                    let xdiff = (self.lastMoveEnd.x - self.lastMoveBegin.x)
+                    let ydiff = (self.lastMoveEnd.y - self.lastMoveBegin.y)
                     let diffVector = CGVectorMake(xdiff, ydiff)
                     
-//                    if blocks.count < 1{
+
                     
                     
                     
                     if self.tappedSprite as? ThrowableConnector != nil{
-                        let action = SKAction.moveBy(diffVector, duration: 0.5)
+                        if (blocks.count >= 1){
                             println("Throw it here 2")
-                        self.tappedSprite.runAction(SKAction.repeatActionForever(action))
-                        NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "unselectSprite", userInfo: nil, repeats: false)
+                            
+                            var topMostY = Double(blocks[0].position.y)
+                            var extendedX = extendVectorToYValue(diffVector, yValue: topMostY - Double(self.lastMoveBegin.y))
+                            
+                            var endPoint = CGPointMake(CGFloat(findNearestX(extendedX + Double(self.lastMoveBegin.x))), CGFloat(topMostY))
+                            var touchedPoint:SKSpriteNode = nodeAtPoint(endPoint) as SKSpriteNode
+                            let action = SKAction.moveTo(endPoint, duration: 0.2)
+                            self.tappedSprite.runAction(action)
+                            
+                            if let index:Int = find(blocks[0].sprites, touchedPoint){
+                                if let updateConnector = blocks[0].values[index] as? Connector{
+                                    if chosenValue != nil && updateConnector.setType(chosenValue){
+                                        blocks[0].sprites[index].texture = SKTexture(imageNamed: chosenValue)
+                                        
+                                        if blocks[0].isSolved(){
+                                            evaluateTrue()
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "unselectSprite", userInfo: nil, repeats: false)
+                        }
+
                     }
-//                    } else{
-//                        //extendedVector = (//extendtoY, Y of topmostBlock)
-//                        let topMostBlockY = blocks[0].position.y
-//                        let xExtension =  extendVectorToYValue(diffVector, yValue: Double(topMostBlockY))
-//                        var extendedVector = CGPointMake(CGFloat(xExtension), topMostBlockY)
-//                        
-//                        let nearestX = findNearestX(xExtension)
-//                        
-//                        
-//                        
-//                        //                        action
-//                        //                        self.tappedSprite.runAction(SKAction.repeatActionForever(action))
-//                        //                        self.tappedSprite = nil
-//                    }
-                    
-                    
-                    
                 }
-                
             }
         }
     }
-    
+    */
 
-    
+    /*
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
         for touch in touches{
             self.lastMoveEnd = touch.locationInNode(self)
@@ -246,27 +258,44 @@ class GameScene: SKScene {
                 if (touchedNode as? SKSpriteNode != nil && self.tappedSprite != nil){
                     
                     let distance = GameScene.distance(self.lastMoveBegin, p2: self.lastMoveEnd)
-                    let xdiff = ((self.lastMoveEnd.x - self.lastMoveBegin.x) / CGFloat(distance)) * 300
-                    let ydiff = ((self.lastMoveEnd.y - self.lastMoveBegin.y) / CGFloat(distance)) * 300
+                    let xdiff = (self.lastMoveEnd.x - self.lastMoveBegin.x)
+                    let ydiff = (self.lastMoveEnd.y - self.lastMoveBegin.y)
                     let diffVector = CGVectorMake(xdiff, ydiff)
-                    //                    var extendedVector =
                     
                     
                     if self.tappedSprite as? ThrowableConnector != nil{
-                        
-                        
-                        println("Throw it here")
-                        
-                        let action = SKAction.moveBy(diffVector, duration: 0.5)
-                        
-                        self.tappedSprite.runAction(SKAction.repeatActionForever(action))
-                        NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "unselectSprite", userInfo: nil, repeats: false)
+                        if (blocks.count >= 1){
+                            
+                            
+                            println("Throw it here")
+                            var topMostY = Double(blocks[0].position.y)
+                            var extendedX = extendVectorToYValue(diffVector, yValue: topMostY - Double(self.lastMoveBegin.y))
+                            
+                            var endPoint = CGPointMake(CGFloat(findNearestX(extendedX + Double(self.lastMoveBegin.x))), CGFloat(topMostY))
+                            var touchedPoint:SKSpriteNode = nodeAtPoint(endPoint) as SKSpriteNode
+                            let action = SKAction.moveTo(endPoint, duration: 0.2)
+                            self.tappedSprite.runAction(action)
+                            
+                            if let index:Int = find(blocks[0].sprites, touchedPoint){
+                                if let updateConnector = blocks[0].values[index] as? Connector{
+                                    if chosenValue != nil && updateConnector.setType(chosenValue){
+                                        blocks[0].sprites[index].texture = SKTexture(imageNamed: chosenValue)
+                                        
+                                        if blocks[0].isSolved(){
+                                            evaluateTrue()
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "unselectSprite", userInfo: nil, repeats: false)
+                        }
                     }
                 }
             }
         }
     }
-    
+    */
     //returns the new X value for the vector
     func extendVectorToYValue (vector: CGVector, yValue:Double) -> Double{
         return (yValue / Double(vector.dy)) * Double(vector.dx)
@@ -275,36 +304,26 @@ class GameScene: SKScene {
     //returns the actual endpoint of the throw
     func findNearestX (xToCheck: Double) -> Double{
         var nearestX = 0.0
+        var nearestXScore = 0.0
         if (blocks.count > 0){
             let topMostBlock = blocks[0] as ComplexBlock
             var connectors:[SKSpriteNode] = []
+            
             for var i = 1; i < topMostBlock.sprites.count ; i += 2{
                 connectors.append(topMostBlock.sprites[i] as SKSpriteNode)
             }
             
-            var nearestX = 50000.0
+            nearestXScore = 50000.0
             for connector in connectors{
-                if Double(abs(Double(connector.position.x) - xToCheck)) < Double(nearestX){
-                    nearestX = Double(abs(Double(connector.position.x) - xToCheck))
+                if Double(abs(Double(connector.position.x + topMostBlock.position.x) - xToCheck)) < Double(nearestXScore){
+                    nearestXScore = Double(abs(Double(connector.position.x + topMostBlock.position.x) - xToCheck))
+                    nearestX = Double(connector.position.x + topMostBlock.position.x)
                 }
             }
         }
         
         return nearestX
     }
-    
-    //constructs the curved path for the throw
-    func findNewPath(from: CGPoint, vectorExtension: CGVector, endPoint: CGPoint) -> CGPathRef {
-        let myPath = UIBezierPath()
-        myPath.moveToPoint(from)
-        let vectorMidPoint = CGPointMake(from.x + ((vectorExtension.dx - from.x) / 2),
-            from.y +  ((vectorExtension.dy - from.y) / 2))
-        myPath.addQuadCurveToPoint(endPoint, controlPoint: vectorMidPoint)
-        return myPath.CGPath
-    }
-    
-    
-    
 
     
     func evaluateTrue() {
@@ -349,7 +368,9 @@ class GameScene: SKScene {
         
         let targetColor : UIColor = color ? UIColor.blueColor() : UIColor.redColor()
         
-        let newTargetNode = SKSpriteNode(texture: nil, color: targetColor.colorWithAlphaComponent(0.7), size: CGSizeMake(self.frame.width, targetHeight))
+        let newTargetNode = SKSpriteNode(texture: nil, color: targetColor, size: CGSizeMake(self.frame.width, targetHeight))
+        
+        newTargetNode.alpha = 0.0;
         
         newTargetNode.anchorPoint = CGPointMake(0.5, 0.0)
         
@@ -358,6 +379,11 @@ class GameScene: SKScene {
         
         self.addChild(newTargetNode);
         
+        let fadeInAction : SKAction = SKAction.fadeAlphaTo(CGFloat(0.7), duration: 1.0)
+        
+        
+        newTargetNode.runAction(fadeInAction)
+        
         targetSprites.append(newTargetNode);
     }
     
@@ -365,7 +391,20 @@ class GameScene: SKScene {
         
         println("Generate block: Target sprites count: \(targetSprites.count)")
         
-        let difficulty : Double = Double(arc4random()) % 4.0 + 2.0;
+        var difficulty : Double = Double(arc4random()) % 4.0 + 2.0;
+        
+        if difficulty > 3.0 {
+            
+            difficulty = Double(arc4random()) % 4.0 + 2.0
+            
+            if difficulty > 4.0 {
+                
+                difficulty = Double(arc4random()) % 4.0 + 2.0
+                
+            }
+            
+        }
+        
         let simpleArray : GenericBlock = GenericBlock(difficulty: Int(difficulty));
         let newTarget : Bool = simpleArray.goal;
         let complexBlock : ComplexBlock = ComplexBlock(thisBlock: simpleArray);
@@ -407,23 +446,23 @@ class GameScene: SKScene {
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
-        if(!gameOver) {
-            if (counter == 300){ counter = 0;}
-            if (counter == 0){ generateBlock();}
-            counter++;
-            
+      //  if(!gameOver) {
+            if (counter == counterReset){ counter = 0;}
+        
             for sprite in blocks {
-                sprite.position.y -= 2;
+                sprite.position.y -= fallingSpeed;
             }
-            
+        if (!gameOver) {
+            if (counter == 0){ generateBlock();}
+
             if targetSprites.count > 0 && blocks.count > 0 {
                // if CGRectGetMaxY(blocks[0].frame) == CGRectGetMaxY(targetSprites[0].frame) {
                   if blocks[0].position.y < CGRectGetMidY(targetSprites[0].frame) {
                     gameOver = true;
                     
-                    var button: Button = Button(defaultButtonImage: "restartbut1", activeButtonImage: "restartbut1_active", buttonAction: restart)
+                    var button: Button = Button(defaultButtonImage: "restartBut1", activeButtonImage: "restartBut1_active", buttonAction: restart)
                     
-                    gameOverSprite = GameOverSprite (spriteSize: CGSize(width: 400.0, height: 400.0), restartBut: button)
+                    gameOverSprite = GameOverSprite (spriteSize: CGSize(width: 400.0, height: 400.0), restartBut: button, score: score)
                     
                     gameOverSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
                     
@@ -433,27 +472,34 @@ class GameScene: SKScene {
                     
                 }
             }
+            counter++;
+
         }
+      //  }
     }
     
     func restart () {
         
-        for var i : Int = 0; i < blocks.count; ++i {
+        gameOver = true
+        
+        score = 0;
+        
+        scoreLabel.text = "0";
+        
+        while blocks.count > 0 {
             let thisBlock : ComplexBlock = blocks.removeAtIndex(0)
             thisBlock.removeFromParent()
         }
-        for var i : Int = 0; i < targets.count; ++i {
+        while (targets.count > 0) {
             targets.removeAtIndex(0)
         }
-        for var i : Int = 0; i < targetSprites.count; ++i {
+        while (targetSprites.count > 0) {
             let thisSprite : SKSpriteNode = targetSprites.removeAtIndex(0)
             thisSprite.removeFromParent()
         }
-        
         gameOverSprite.removeFromParent()
-        
         gameOver = false;
-        
+        counter = 0;
     }
     
 }

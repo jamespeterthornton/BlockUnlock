@@ -174,7 +174,7 @@ class ComplexBlock : SKSpriteNode {
 }
 class GameOverSprite : SKSpriteNode {
     
-    init (spriteSize : CGSize, restartBut: Button) {
+    init (spriteSize : CGSize, restartBut: Button, score: Int) {
         
         let backgroundColor : UIColor = UIColor.blackColor().colorWithAlphaComponent(0.7);
         
@@ -193,7 +193,7 @@ class GameOverSprite : SKSpriteNode {
         b.position = CGPointMake(gameOverLabel.position.x, gameOverLabel.position.y + 75)
         
         var c = SKLabelNode()
-        c.text = "Liebowitz      99999"
+        c.text = "Player      \(score)"
         c.fontName = "Arial"
         c.fontSize = 30
         c.position = CGPointMake(gameOverLabel.position.x, gameOverLabel.position.y + 35)
