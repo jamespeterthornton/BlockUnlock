@@ -92,11 +92,11 @@ class ComplexBlock : SKSpriteNode {
     }
     
     func isSolved() -> Bool {
-        
-      //  if (block.iss)
-        
-        return false;
-        
+        if block.isSolved() {
+            return true;
+        } else {
+            return false;
+        }
     }
     
  
