@@ -100,6 +100,7 @@ class GameScene: SKScene {
         sparkEmmiter.name = "sparkEmmitter"
         sparkEmmiter.targetNode = self
         self.addChild(sparkEmmiter)
+        
         sparkEmmiter.runAction(SKAction.fadeOutWithDuration(0.20))
         NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: "destroyParticle:", userInfo: sparkEmmiter, repeats: false)
         
