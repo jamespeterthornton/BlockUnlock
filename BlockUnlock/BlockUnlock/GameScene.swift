@@ -36,18 +36,17 @@ class GameScene: SKScene {
         
         NSLog("Game scene width %@", self.frame.width);
         
-        let difficulty : Int = Int(arc4random()) % 5 + 1;
+        let difficulty : Double = Double(arc4random()) % 4.0 + 2.0;
         
         print("And the difficulty is...");
         
         println("\(difficulty)");
         
-        let simpleArray : GenericBlock = GenericBlock(difficulty: difficulty);
+        let simpleArray : GenericBlock = GenericBlock(difficulty: Int(difficulty));
 
         let complexBlock : ComplexBlock = ComplexBlock(newValues: simpleArray.toArray(), target: simpleArray.goal);
         
-        complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
-        
+        complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame) + 300);
         
         self.addChild(complexBlock)
         blocks.append(complexBlock)
@@ -57,7 +56,7 @@ class GameScene: SKScene {
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
         
-        if (counter == 100){ counter = 0;}
+        if (counter == 150){ counter = 0;}
         if (counter == 0){ generateBlock();}
         counter++;
         
