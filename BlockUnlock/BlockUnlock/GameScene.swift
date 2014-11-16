@@ -100,7 +100,7 @@ class GameScene: SKScene {
         sparkEmmiter.name = "sparkEmmitter"
         sparkEmmiter.targetNode = self
         self.addChild(sparkEmmiter)
-        
+        sparkEmmiter.runAction(SKAction.fadeOutWithDuration(0.20))
         NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: "destroyParticle:", userInfo: sparkEmmiter, repeats: false)
         
         println("exploded")
@@ -109,6 +109,7 @@ class GameScene: SKScene {
     func destroyParticle(timer: NSTimer) -> () {
         println(1)
         var userInfo = timer.userInfo as SKEmitterNode
+        userInfo.alpha = 0.0
         println("\(userInfo.parent)")
         userInfo.removeFromParent()
         

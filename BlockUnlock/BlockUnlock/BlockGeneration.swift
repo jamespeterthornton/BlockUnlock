@@ -158,12 +158,12 @@ class SimpleBlock {
     func evaluateRecursive(start:Int, end:Int, maxOpType:Int) -> Int {
         //If unary statement
         if (start == end) {
-            return booleans[start]
+            return booleans[start] as Int
         }
         
         //If statement is binary
         if (start == end-1) {
-            return operate(connectors[start], booleans[start], booleans[end])
+            return operate(connectors[start], booleans[start] as Int, booleans[end] as Int)
         }
         
         //Int parses to corresponding operator type
