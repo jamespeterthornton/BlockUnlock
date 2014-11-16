@@ -16,6 +16,22 @@ enum ConnectorType {
         }
         return ConnectorType.opOrder[Int(index)]
     }
+
+    static func strictlyAfter(a:ConnectorType, b:ConnectorType) -> Bool {
+        return precedence(a) > precedence(b)
+    }
+    static func validBefore(a:ConnectorType, b:ConnectorType) -> Bool {
+        return precedence(a) <= precedence(b)
+    }
+    static func precedence(c:ConnectorType) -> Int {
+        switch c {
+            case or:    return 3
+            case and:   return 2
+            case xor:   return 1
+            case blank: return 3
+            default:    return 0
+        }
+    }
 }
 
 /*
@@ -131,7 +147,9 @@ class SimpleBlock {
             }
         }
         // Ensure some Connectors are writable
-        connectors[Int(arc4random_uniform(UInt32(connectors.count)))].writable = true
+        let index = Int(arc4random_uniform(UInt32(connectors.count)))
+        connectors[index].writable = true
+        connectors[index].setType("Blank")
     }
     
     //Initialisation with value of connector
@@ -166,11 +184,6 @@ class SimpleBlock {
             return booleans[start] as Int
         }
         
-        //If statement is binary
-        if (start == end-1) {
-            return operate(connectors[start], booleans[start] as Int, booleans[end] as Int)
-        }
-        
         //Int parses to corresponding operator type
         var currentOpType : Int = maxOpType
         var acted : Bool = false
@@ -198,13 +211,13 @@ class SimpleBlock {
     }
     
     func evaluateTo(goal:Bool) -> Bool {
-        return evaluateToRecursive(goal ? 1 : 0, start:0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
+        return evaluateToRecursive(goal, start:0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
     }
     
-    func evaluateToRecursive(goal:Int, start:Int, end:Int, maxOpType:Int) -> Bool {
+    func evaluateToRecursive(goal:Bool, start:Int, end:Int, maxOpType:Int) -> Bool {
         //If unary statement
         if (start == end) {
-            return booleans[start] == goal
+            return booleans[start] == (goal ? 1 : 0)
         }
         
         //Int parses to corresponding operator type
@@ -215,6 +228,9 @@ class SimpleBlock {
         while currentOpType >= 0 {
             for index in start..<end {
                 var op = connectors[index]
+                if (!op.isWritable() && ConnectorType.strictlyAfter(op.type, b:ConnectorType.opOrder[currentOpType])) {
+                    return false
+                }
                 if (op.isWritable() || op.isType(ConnectorType.opOrder[currentOpType])) {
                     let aFalsable = evaluateToRecursive(false, start:start, end:index, maxOpType:currentOpType)
                     let aTruable =  evaluateToRecursive(true,  start:start, end:index, maxOpType:currentOpType)
@@ -259,7 +275,6 @@ class SimpleBlock {
         arrayobj.append(booleans[booleans.count-1])
         return arrayobj
     }
-    
     func getString() -> String {
         var s : String = ""
         for i in 0..<(connectors.count){
@@ -268,6 +283,9 @@ class SimpleBlock {
         }
         s += "\(booleans[booleans.count-1])"
         return s
+    }
+    func debugString() -> String {
+        return "simple = \(getString()) = \(evaluate()) currently. Truable = \(evaluateTo(true)), Falsable = \(evaluateTo(false))"
     }
 }
 
@@ -357,18 +375,13 @@ class SuperBlock {
     
     //Recursively evaluates generated block statement
     func evaluateInt() -> Int {
-        return evaluateRecursive(0, end:connectors.count-1, maxOpType:ConnectorType.opOrder.count-1)
+        return evaluateRecursive(0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
     }
     
     func evaluateRecursive(start:Int, end:Int, maxOpType:Int) -> Int {
         //If unary statement
         if (start == end) {
             return blocks[start].evaluateInt()
-        }
-        
-        //If statement is binary
-        if (start == end-1) {
-            return operate(connectors[start], blocks[start].evaluateInt(), blocks[end].evaluateInt())
         }
         
         //Int parses to corresponding operator type
@@ -380,25 +393,31 @@ class SuperBlock {
             for index in start..<end {
                 var op = connectors[index]
                 if (!op.isBlank() && op.isType(ConnectorType.opOrder[currentOpType])) {
-                    let result = operate(op, evaluateRecursive(start, end:index, maxOpType:currentOpType), evaluateRecursive(index+1, end:end, maxOpType:currentOpType))
-                    if (result != 2) { // look for all reasonable interpretations
+                    let resultA = evaluateRecursive(start, end:index, maxOpType:currentOpType)
+                    var result = operate(op, resultA, 2) // short circuit
+                    if (result != 2) { // result is knowable
                         return result
                     }
+                    result = operate(op, resultA, evaluateRecursive(index+1, end:end, maxOpType:currentOpType))
+                    if (result != 2) { // result is knowable
+                        return result
+                    }
+                    // else continue, look for all reasonable interpretations
                 }
             }
             currentOpType--;
-        }        
+        }
         return 2
     }
     
     func evaluateTo(goal:Bool) -> Bool {
-        return evaluateToRecursive(goal ? 1 : 0, start:0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
+        return evaluateToRecursive(goal, start:0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
     }
     
-    func evaluateToRecursive(goal:Int, start:Int, end:Int, maxOpType:Int) -> Bool {
+    func evaluateToRecursive(goal:Bool, start:Int, end:Int, maxOpType:Int) -> Bool {
         //If unary statement
         if (start == end) {
-            return blocks[start].evaluateTo(goal == 1)
+            return blocks[start].evaluateTo(goal)
         }
         
         //Int parses to corresponding operator type
@@ -409,6 +428,9 @@ class SuperBlock {
         while currentOpType >= 0 {
             for index in start..<end {
                 var op = connectors[index]
+                if (!op.isWritable() && ConnectorType.strictlyAfter(op.type, b:ConnectorType.opOrder[currentOpType])) {
+                    return false
+                }
                 if (op.isWritable() || op.isType(ConnectorType.opOrder[currentOpType])) {
                     let aFalsable = evaluateToRecursive(false, start:start, end:index, maxOpType:currentOpType)
                     let aTruable =  evaluateToRecursive(true,  start:start, end:index, maxOpType:currentOpType)
@@ -453,7 +475,6 @@ class SuperBlock {
         arrayobj += blocks[blocks.count-1].toArray()
         return arrayobj
     }
-    
     func getString() -> String {
         var s : String = ""
         for i in 0..<(connectors.count){
@@ -462,6 +483,9 @@ class SuperBlock {
         }
         s += "(\(blocks[blocks.count-1].getString()))"
         return s
+    }
+    func debugString() -> String {
+        return "super = \(getString()) = \(evaluate()) currently. Truable = \(evaluateTo(true)), Falsable = \(evaluateTo(false))"
     }
 }
 
@@ -554,12 +578,21 @@ class GenericBlock {
 }
 
 /*
-var a = GenericBlock(difficulty:25)
-println(a.getString())
-println(a.evaluate())
-println(a.isSolvable())
-var b = SuperBlock(str:a.getString())
-println(b.getString())
+var s = GenericBlock(difficulty:25)
+println(s.getString())
+println(s.evaluate())
+println(s.isSolvable())
+println(s.evaluateTo(!a.goal))
+*/
+
+/*
+var a = SimpleBlock(str:"0|1|1 0") // goal false
+var b = SuperBlock(str:"(1+0|1)+(0+1)") // goal false
 println(b.evaluate())
-println(b.evaluateTo(a.goal))
+println(b.blocks[0].evaluate())
+println(b.blocks[1].evaluate())
+var c = SuperBlock(str:"(1x1|0)x(1|1)") // goal true
+println(c.evaluate())
+println(c.blocks[0].evaluate())
+println(c.blocks[1].evaluate())
 */
