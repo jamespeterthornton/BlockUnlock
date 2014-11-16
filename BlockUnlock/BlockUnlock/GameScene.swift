@@ -26,6 +26,7 @@ class GameScene: SKScene {
     let MOVEDIFF = 6.0 // num of pixels that determines drag v drop
     let SPRITESIZE =  CGSizeMake(45, 42)
     var tappedSprite: SKSpriteNode!
+    var gameOverSprite : GameOverSprite!
     var chosenValue : NSString!
     var lastMoveBegin: CGPoint!
     var lastMoveEnd: CGPoint!
@@ -122,9 +123,6 @@ class GameScene: SKScene {
                 chosenValue = touchedNode.connectorType
                 
             } else if let touchedNode = nodeAtPoint(lastMoveBegin) as? SKSpriteNode {
-                
-                
-                
                 
                 if let index : Int = find(blocks[0].sprites, touchedNode) {
                 
@@ -311,36 +309,38 @@ class GameScene: SKScene {
     
     func evaluateTrue() {
     
-        if targetSprites.count > 0 {
+        if(!gameOver) {
             
-            score += 1
-            scoreLabel.text = "\(score)"
-            
-            println("\(targetSprites.count)");
-            
-            let block : ComplexBlock = blocks.removeAtIndex(0);
-            let targetSprite : SKSpriteNode = targetSprites.removeAtIndex(0);
-            
-            let moveAction = SKAction.moveTo(CGPointMake(targetSprite.position.x, targetSprite.position.y), duration: 0.3);
-            
-            block.runAction(moveAction, completion: { () -> Void in
+            if targetSprites.count > 0 {
                 
-                block.hasExploded()
-                self.explode( block.position.x, y: block.position.y)
-                block.hidden = true
-                targetSprite.removeFromParent()
+                score += 1
+                scoreLabel.text = "\(score)"
                 
-            })
-            
-            
-            if targets.count > 0 {
-            
-                let target : Bool = targets.removeAtIndex(0);
+                println("\(targetSprites.count)");
+                
+                let block : ComplexBlock = blocks.removeAtIndex(0);
+                let targetSprite : SKSpriteNode = targetSprites.removeAtIndex(0);
+                
+                let moveAction = SKAction.moveTo(CGPointMake(targetSprite.position.x, targetSprite.position.y), duration: 0.3);
+                
+                block.runAction(moveAction, completion: { () -> Void in
+                    
+                    block.hasExploded()
+                    self.explode( block.position.x, y: block.position.y)
+                    block.hidden = true
+                    targetSprite.removeFromParent()
+                    
+                })
+                
+                
+                if targets.count > 0 {
+                
+                    let target : Bool = targets.removeAtIndex(0);
 
-                addTarget(target)
+                    addTarget(target)
+                }
             }
         }
-        
     }
     
     func addTarget(color : Bool) {
@@ -362,6 +362,8 @@ class GameScene: SKScene {
     }
     
     func generateBlock () {
+        
+        println("Generate block: Target sprites count: \(targetSprites.count)")
         
         let difficulty : Double = Double(arc4random()) % 4.0 + 2.0;
         let simpleArray : GenericBlock = GenericBlock(difficulty: Int(difficulty));
@@ -405,31 +407,53 @@ class GameScene: SKScene {
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
-        
-        if (counter == 300){ counter = 0;}
-        if (counter == 0){ generateBlock();}
-        counter++;
-        
-        for sprite in blocks {
-            sprite.position.y -= 1;
-        }
-        
-        if targetSprites.count > 0 && blocks.count > 0 {
-            if targetSprites[0].position.y == blocks[0].position.y {
-                
-                gameOver = true;
-                
-                let gameOverSprite : GameOverSprite = GameOverSprite (spriteSize: CGSize(width: 200.0, height: 200.0))
-                
-                gameOverSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-                
-                gameOverSprite.zPosition = 1500
-                
-                self.addChild(gameOverSprite)
-                
-                
+        if(!gameOver) {
+            if (counter == 300){ counter = 0;}
+            if (counter == 0){ generateBlock();}
+            counter++;
+            
+            for sprite in blocks {
+                sprite.position.y -= 2;
+            }
+            
+            if targetSprites.count > 0 && blocks.count > 0 {
+               // if CGRectGetMaxY(blocks[0].frame) == CGRectGetMaxY(targetSprites[0].frame) {
+                  if blocks[0].position.y < CGRectGetMidY(targetSprites[0].frame) {
+                    gameOver = true;
+                    
+                    var button: Button = Button(defaultButtonImage: "restartbut1", activeButtonImage: "restartbut1_active", buttonAction: restart)
+                    
+                    gameOverSprite = GameOverSprite (spriteSize: CGSize(width: 400.0, height: 400.0), restartBut: button)
+                    
+                    gameOverSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+                    
+                    gameOverSprite.zPosition = 1500
+                    
+                    self.addChild(gameOverSprite)
+                    
+                }
             }
         }
+    }
+    
+    func restart () {
+        
+        for var i : Int = 0; i < blocks.count; ++i {
+            let thisBlock : ComplexBlock = blocks.removeAtIndex(0)
+            thisBlock.removeFromParent()
+        }
+        for var i : Int = 0; i < targets.count; ++i {
+            targets.removeAtIndex(0)
+        }
+        for var i : Int = 0; i < targetSprites.count; ++i {
+            let thisSprite : SKSpriteNode = targetSprites.removeAtIndex(0)
+            thisSprite.removeFromParent()
+        }
+        
+        gameOverSprite.removeFromParent()
+        
+        gameOver = false;
         
     }
+    
 }
