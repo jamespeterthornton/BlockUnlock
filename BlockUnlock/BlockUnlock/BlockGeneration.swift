@@ -1,6 +1,3 @@
-import UIkit
-import Foundation
-
 //Enum for different connectors, creates and array containing connectors which are
 //parsed from user or randomly generated ints
 enum ConnectorType {
@@ -41,16 +38,16 @@ class Connector : NSObject {
     }
     
     //Parses character type to corresponding connector
-    init(type:Character) {
-        writable = true
-        simple = true
-        switch type {
-        case "|": self.type = .or
-        case "+": self.type = .and
-        case "x": self.type = .xor
-        case " ": self.type = .blank
-        default:  self.type = .blank
+    init(str:Character) {
+        switch str {
+        case "|": type = .or
+        case "+": type = .and
+        case "x": type = .xor
+        case " ": type = .blank
+        default:  type = .blank
         }
+        simple = true
+        writable = (type == .blank)
     }
     
     //Getter methods
@@ -92,7 +89,7 @@ class Connector : NSObject {
         default: return "?"
         }
     }
-    
+
     func getName() -> String {
         switch type {
         case .and: return "AND"
@@ -135,19 +132,15 @@ class SimpleBlock {
         }
         // Ensure some Connectors are writable
         connectors[Int(arc4random_uniform(UInt32(connectors.count)))].writable = true
-        
-        if (booleans.count == 2 && booleans[0] == 0 && booleans[1] == 0) {
-                booleans[Int(arc4random_uniform(2))] = 1
-        }
     }
     
     //Initialisation with value of connector
-    init (t:String) {
-        for (index, char) in enumerate(t) {
+    init (str:String) {
+        for (index, char) in enumerate(str) {
             if index%2 == 0 { // Boolean
                 booleans.append((char == "0") ? 0 : 1)
             } else { // Connector
-                connectors.append(Connector(type:char))
+                connectors.append(Connector(str:char))
             }
         }
     }
@@ -204,6 +197,58 @@ class SimpleBlock {
         return 2
     }
     
+    func evaluateTo(goal:Bool) -> Bool {
+        return evaluateToRecursive(goal ? 1 : 0, start:0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
+    }
+    
+    func evaluateToRecursive(goal:Int, start:Int, end:Int, maxOpType:Int) -> Bool {
+        //If unary statement
+        if (start == end) {
+            return booleans[start] == goal
+        }
+        
+        //Int parses to corresponding operator type
+        var currentOpType : Int = maxOpType
+        var acted : Bool = false
+        
+        //Evaluates statement according to logical operators
+        while currentOpType >= 0 {
+            for index in start..<end {
+                var op = connectors[index]
+                if (op.isWritable() || op.isType(ConnectorType.opOrder[currentOpType])) {
+                    let aFalsable = evaluateToRecursive(false, start:start, end:index, maxOpType:currentOpType)
+                    let aTruable =  evaluateToRecursive(true,  start:start, end:index, maxOpType:currentOpType)
+                    let bFalsable = evaluateToRecursive(false, start:index+1, end:end, maxOpType:currentOpType)
+                    let bTruable =  evaluateToRecursive(true,  start:index+1, end:end, maxOpType:currentOpType)
+                    switch ConnectorType.opOrder[currentOpType] {
+                    case .and:
+                        if (goal == true && (aTruable && bTruable)) {
+                            return true
+                        } else if (goal == false && (aFalsable || bFalsable)) {
+                            return true
+                        }
+                    case .or:
+                        if (goal == true && (aTruable || bTruable)) {
+                            return true
+                        } else if (goal == false && (aFalsable && bFalsable)) {
+                            return true
+                        }
+                    case .xor:
+                        if (goal == true && ((aTruable && bFalsable) || (aFalsable && bTruable))) {
+                            return true
+                        } else if (goal == false && ((aTruable && bTruable) || (aFalsable && bFalsable))) {
+                            return true
+                        }
+                    default:
+                        break;
+                    }
+                }
+            }
+            currentOpType--;
+        }
+        return false
+    }
+    
     //Returns statement as array of objects
     func toArray()->Array<NSObject>{
         var arrayobj = Array<NSObject>()
@@ -246,11 +291,11 @@ class SuperBlock {
         var numbers = [UInt32]()
         if (difficulty == 6) {
             switch (arc4random_uniform(8)) {
-            case 0:     numbers = [2, 2, 2]
-            case 1,2:   numbers = [2, 4]
-            case 3,4:   numbers = [4, 2]
-            case 5,6,7: fallthrough
-            default:    numbers = [3, 3]
+                case 0:     numbers = [2, 2, 2]
+                case 1,2:   numbers = [2, 4]
+                case 3,4:   numbers = [4, 2]
+                case 5,6,7: fallthrough
+                default:    numbers = [3, 3]
             }
         } else {
             var remaining = UInt32(difficulty)
@@ -285,6 +330,21 @@ class SuperBlock {
         }
     }
     
+    init (str:String) {
+        var array : [String] = str.componentsSeparatedByCharactersInSet(NSCharacterSet (charactersInString: "()"))
+        array.removeLast()
+        array.removeAtIndex(0)
+        var block = true
+        for s in array {
+            if block {
+                blocks.append(SimpleBlock(str:s))
+            } else {
+                connectors.append(Connector(str:(Array(s)[0])))
+            }
+            block = !block
+        }
+    }
+    
     //Returns 0 if false, 1 if true, and nil if unknown
     func evaluate() -> Bool? {
         switch evaluateInt() {
@@ -297,7 +357,7 @@ class SuperBlock {
     
     //Recursively evaluates generated block statement
     func evaluateInt() -> Int {
-        return evaluateRecursive(0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
+        return evaluateRecursive(0, end:connectors.count-1, maxOpType:ConnectorType.opOrder.count-1)
     }
     
     func evaluateRecursive(start:Int, end:Int, maxOpType:Int) -> Int {
@@ -327,8 +387,60 @@ class SuperBlock {
                 }
             }
             currentOpType--;
-        }
+        }        
         return 2
+    }
+    
+    func evaluateTo(goal:Bool) -> Bool {
+        return evaluateToRecursive(goal ? 1 : 0, start:0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
+    }
+    
+    func evaluateToRecursive(goal:Int, start:Int, end:Int, maxOpType:Int) -> Bool {
+        //If unary statement
+        if (start == end) {
+            return blocks[start].evaluateTo(goal == 1)
+        }
+        
+        //Int parses to corresponding operator type
+        var currentOpType : Int = maxOpType
+        var acted : Bool = false
+        
+        //Evaluates statement according to logical operators
+        while currentOpType >= 0 {
+            for index in start..<end {
+                var op = connectors[index]
+                if (op.isWritable() || op.isType(ConnectorType.opOrder[currentOpType])) {
+                    let aFalsable = evaluateToRecursive(false, start:start, end:index, maxOpType:currentOpType)
+                    let aTruable =  evaluateToRecursive(true,  start:start, end:index, maxOpType:currentOpType)
+                    let bFalsable = evaluateToRecursive(false, start:index+1, end:end, maxOpType:currentOpType)
+                    let bTruable =  evaluateToRecursive(true,  start:index+1, end:end, maxOpType:currentOpType)
+                    switch ConnectorType.opOrder[currentOpType] {
+                    case .and:
+                        if (goal == true && (aTruable && bTruable)) {
+                            return true
+                        } else if (goal == false && (aFalsable || bFalsable)) {
+                            return true
+                        }
+                    case .or:
+                        if (goal == true && (aTruable || bTruable)) {
+                            return true
+                        } else if (goal == false && (aFalsable && bFalsable)) {
+                            return true
+                        }
+                    case .xor:
+                        if (goal == true && ((aTruable && bFalsable) || (aFalsable && bTruable))) {
+                            return true
+                        } else if (goal == false && ((aTruable && bTruable) || (aFalsable && bFalsable))) {
+                            return true
+                        }
+                    default:
+                        break;
+                    }
+                }
+            }
+            currentOpType--;
+        }
+        return false
     }
     
     //Returns statement as array of objects
@@ -381,22 +493,22 @@ func operate(c:Connector, a:Int, b:Int) -> Int {
         } else {
             return 0
         }
-        /*  case .iff:
+/*  case .iff:
         if (a == 2 || b == 2) {
-        return 2
+            return 2
         } else if (a == b) {
-        return 1
+            return 1
         } else {
-        return 0
+            return 0
         }*/
     default: return 2
     }
 }
 
 /*
-* Wrapper class for blocks
-* Pass in length as "difficulty"
-*/
+ * Wrapper class for blocks
+ * Pass in length as "difficulty"
+ */
 class GenericBlock {
     var goal : Bool
     var isSuper : Bool
@@ -405,35 +517,32 @@ class GenericBlock {
     
     init (difficulty:Int) {
         var status : Bool?
-        if difficulty > 4 {
-            superB = SuperBlock(difficulty: difficulty)
-            status = superB!.evaluate()
-            isSuper = true
-        } else {
-            simpleB = SimpleBlock(difficulty: difficulty)
-            status = simpleB!.evaluate()
-            isSuper = false
-        }
-        if status == nil {
-            goal = Int(arc4random_uniform(2)) == 1
-        } else {
-            goal = !status!
-        }    }
+        do {
+            if difficulty > 4 {
+                superB = SuperBlock(difficulty: difficulty)
+                status = superB?.evaluate()
+                isSuper = true
+            } else {
+                simpleB = SimpleBlock(difficulty: difficulty)
+                status = simpleB?.evaluate()
+                isSuper = false
+            }
+            if status == nil {
+                goal = Int(arc4random_uniform(2)) == 1
+            } else {
+                goal = !status!
+            }
+        } while (!isSolvable())
+    }
     
+    func isSolvable() -> Bool {
+        return isSuper ? superB!.evaluateTo(goal) : simpleB!.evaluateTo(goal)
+    }
     func isSolved() -> Bool {
         var status = evaluate()
-        
-        println("Is solved return this status:  \(status) compared to this goal: \(goal)")
-        
-        return status != nil && status! == goal
+        return status != nil && status == goal
     }
     func evaluate() -> Bool? {
-        
-        let retValue = isSuper ? superB!.evaluate() : simpleB!.evaluate()
-        
-        println(getString())
-        
-        println("\(retValue)");
         return isSuper ? superB!.evaluate() : simpleB!.evaluate()
     }
     func toArray() -> [NSObject] {
@@ -445,6 +554,12 @@ class GenericBlock {
 }
 
 /*
-var s = GenericBlock(difficulty:10)
-println(s.getString())
+var a = GenericBlock(difficulty:25)
+println(a.getString())
+println(a.evaluate())
+println(a.isSolvable())
+var b = SuperBlock(str:a.getString())
+println(b.getString())
+println(b.evaluate())
+println(b.evaluateTo(a.goal))
 */
