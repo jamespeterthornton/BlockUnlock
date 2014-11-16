@@ -14,7 +14,7 @@ var blocks: [ComplexBlock] = []
 var targets: [Bool] = []
 var targetSprites : [SKSpriteNode] = []
 var counter: Int = 0
-let controlsHeight : CGFloat = 100
+let controlsHeight : CGFloat = 75
 let targetHeight : CGFloat = 75
 var gameOver : Bool = false
 var score : Int = 0
@@ -34,7 +34,7 @@ class GameScene: SKScene {
     let evalLabel : SKLabelNode = SKLabelNode()
     
     let counterReset : Int = 150
-    let fallingSpeed : CGFloat = CGFloat(1)
+    let fallingSpeed : CGFloat = CGFloat(3)
     
 
     
@@ -131,25 +131,27 @@ class GameScene: SKScene {
                 
             } else if let touchedNode = nodeAtPoint(lastMoveBegin) as? SKSpriteNode {
                 
-                if let index : Int = find(blocks[0].sprites, touchedNode) {
-                
-                    if let updateConnector = blocks[0].values[index] as? Connector {
-                    
-                        if chosenValue != nil && updateConnector.setType(chosenValue) {
+                if blocks.count >= 1{
+                    if let index : Int = find(blocks[0].sprites, touchedNode) {
+                        
+                        if let updateConnector = blocks[0].values[index] as? Connector {
                             
-                            blocks[0].sprites[index].texture = SKTexture(imageNamed: chosenValue)
-        
-                            println("Evaluate")
-                            
-                            
-                            if blocks[0].isSolved() {
-                                println("Success")
-                                evaluateTrue()
+                            if chosenValue != nil && updateConnector.setType(chosenValue) {
+                                
+                                blocks[0].sprites[index].texture = SKTexture(imageNamed: chosenValue)
+                                
+                                println("Evaluate")
+                                
+                                
+                                if blocks[0].isSolved() {
+                                    println("Success")
+                                    evaluateTrue()
+                                }
+                                
                             }
-                            
                         }
+                        println("Sicknasty shit dawg")
                     }
-                    println("Sicknasty shit dawg")
                 }
                 
             }
@@ -161,8 +163,11 @@ class GameScene: SKScene {
         self.tappedSprite.removeFromParent()
 //        self.tappedSprite = nil
     }
-    /*
+    
     override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
+        
+        println("into moved:")
+        
         for touch in touches{
             self.lastMoveEnd = touch.locationInNode(self)
             
@@ -172,7 +177,7 @@ class GameScene: SKScene {
                 
                 if let touchedNode = nodeAtPoint(location) as? ThrowableConnector{
                     
-                    self.tappedSprite = makeNewThrowable(touchedNode.connectorType)
+//                    self.tappedSprite = makeNewThrowable(touchedNode.connectorType)
                 }
                     
                     
@@ -195,34 +200,42 @@ class GameScene: SKScene {
                             var extendedX = extendVectorToYValue(diffVector, yValue: topMostY - Double(self.lastMoveBegin.y))
                             
                             var endPoint = CGPointMake(CGFloat(findNearestX(extendedX + Double(self.lastMoveBegin.x))), CGFloat(topMostY))
-                            var touchedPoint:SKSpriteNode = nodeAtPoint(endPoint) as SKSpriteNode
-                            let action = SKAction.moveTo(endPoint, duration: 0.2)
-                            self.tappedSprite.runAction(action)
-                            
-                            if let index:Int = find(blocks[0].sprites, touchedPoint){
-                                if let updateConnector = blocks[0].values[index] as? Connector{
-                                    if chosenValue != nil && updateConnector.setType(chosenValue){
-                                        blocks[0].sprites[index].texture = SKTexture(imageNamed: chosenValue)
-                                        
-                                        if blocks[0].isSolved(){
-                                            evaluateTrue()
+                            if var touchedPoint:SKSpriteNode = nodeAtPoint(endPoint) as? SKSpriteNode{
+                                let action = SKAction.moveTo(endPoint, duration: 0.2)
+                                self.tappedSprite.runAction(action)
+                                
+                                if let index:Int = find(blocks[0].sprites, touchedPoint){
+                                    if let updateConnector = blocks[0].values[index] as? Connector{
+                                        if chosenValue != nil && updateConnector.setType(chosenValue){
+                                            blocks[0].sprites[index].texture = SKTexture(imageNamed: chosenValue)
+                                            
+                                            if blocks[0].isSolved(){
+                                                evaluateTrue()
+                                            }
                                         }
                                     }
                                 }
+                                
+                                NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "unselectSprite", userInfo: nil, repeats: false)
                             }
                             
-                            NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "unselectSprite", userInfo: nil, repeats: false)
                         }
 
                     }
                 }
             }
         }
+        
+                println("out of moved:")
+        
     }
-    */
+    
 
-    /*
+    
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+        
+                println("into ended:")
+        
         for touch in touches{
             self.lastMoveEnd = touch.locationInNode(self)
             
@@ -272,30 +285,35 @@ class GameScene: SKScene {
                             var extendedX = extendVectorToYValue(diffVector, yValue: topMostY - Double(self.lastMoveBegin.y))
                             
                             var endPoint = CGPointMake(CGFloat(findNearestX(extendedX + Double(self.lastMoveBegin.x))), CGFloat(topMostY))
-                            var touchedPoint:SKSpriteNode = nodeAtPoint(endPoint) as SKSpriteNode
-                            let action = SKAction.moveTo(endPoint, duration: 0.2)
-                            self.tappedSprite.runAction(action)
-                            
-                            if let index:Int = find(blocks[0].sprites, touchedPoint){
-                                if let updateConnector = blocks[0].values[index] as? Connector{
-                                    if chosenValue != nil && updateConnector.setType(chosenValue){
-                                        blocks[0].sprites[index].texture = SKTexture(imageNamed: chosenValue)
-                                        
-                                        if blocks[0].isSolved(){
-                                            evaluateTrue()
+                                if var touchedPoint:SKSpriteNode = nodeAtPoint(endPoint) as? SKSpriteNode {
+                                let action = SKAction.moveTo(endPoint, duration: 0.2)
+                                self.tappedSprite.runAction(action)
+                                
+                                if let index:Int = find(blocks[0].sprites, touchedPoint){
+                                    if let updateConnector = blocks[0].values[index] as? Connector{
+                                        if chosenValue != nil && updateConnector.setType(chosenValue){
+                                            blocks[0].sprites[index].texture = SKTexture(imageNamed: chosenValue)
+                                            
+                                            if blocks[0].isSolved(){
+                                                evaluateTrue()
+                                            }
                                         }
                                     }
                                 }
+                                
+                                NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "unselectSprite", userInfo: nil, repeats: false)
+                            }
                             }
                             
-                            NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "unselectSprite", userInfo: nil, repeats: false)
-                        }
                     }
                 }
             }
         }
+        
+                println("out of ended:")
+        
     }
-    */
+    
     //returns the new X value for the vector
     func extendVectorToYValue (vector: CGVector, yValue:Double) -> Double{
         return (yValue / Double(vector.dy)) * Double(vector.dx)
