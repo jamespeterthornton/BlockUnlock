@@ -38,7 +38,7 @@ class GameScene: SKScene {
         
         
         var complexBlock : ComplexBlock
-        let easyOrHarder : NSNumber = Double(arc4random()) % 2;
+        let easyOrHarder : NSNumber = Double(arc4random()) % 3;
         
         if (easyOrHarder == 0) {
             let trueNum: NSNumber = Double(arc4random()) % 2;
@@ -47,6 +47,16 @@ class GameScene: SKScene {
             let simpleArray: [NSObject] = [trueNum, connector, falseNum]
             complexBlock = ComplexBlock(newValues: simpleArray, makeWidth: self.frame.width);
             complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
+        } else if easyOrHarder == 1 {
+            
+            let trueNum: NSNumber = Double(arc4random()) % 2;
+            let falseNum: NSNumber = Double(arc4random()) % 2;
+            let connector = Connector(thisWriteable: true, thisValue: "AND", thisFixed: true, thisSeparator: false);
+            let bigConnector = Connector(thisWriteable: true, thisValue: "AND", thisFixed: true, thisSeparator: true);
+            let simpleArray: [NSObject] = [trueNum, connector, falseNum, bigConnector, falseNum, connector, trueNum]
+            complexBlock = ComplexBlock(newValues: simpleArray, makeWidth: self.frame.width);
+            complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
+            
         } else {
             
             let trueNum: NSNumber = Double(arc4random()) % 2;

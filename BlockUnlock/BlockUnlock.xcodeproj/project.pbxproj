@@ -20,6 +20,7 @@
 		1A4217F11A1819FF002C0925 /* blueBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217ED1A1819FF002C0925 /* blueBlock.png */; };
 		1A4217F21A1819FF002C0925 /* OR.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217EE1A1819FF002C0925 /* OR.png */; };
 		1A4217F31A1819FF002C0925 /* redBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217EF1A1819FF002C0925 /* redBlock.png */; };
+		1A4217F51A186089002C0925 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217F41A186089002C0925 /* blank.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,7 @@
 		1A4217ED1A1819FF002C0925 /* blueBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueBlock.png; sourceTree = "<group>"; };
 		1A4217EE1A1819FF002C0925 /* OR.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OR.png; sourceTree = "<group>"; };
 		1A4217EF1A1819FF002C0925 /* redBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redBlock.png; sourceTree = "<group>"; };
+		1A4217F41A186089002C0925 /* blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blank.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 				1A4217EA1A180722002C0925 /* Blocks.swift */,
 				1A4217CE1A17E884002C0925 /* Main.storyboard */,
 				1A4217D11A17E884002C0925 /* Images.xcassets */,
+				1A4217F41A186089002C0925 /* blank.png */,
 				1A4217EC1A1819FF002C0925 /* AND.png */,
 				1A4217ED1A1819FF002C0925 /* blueBlock.png */,
 				1A4217EE1A1819FF002C0925 /* OR.png */,
@@ -215,6 +218,7 @@
 			files = (
 				1A4217D51A17E884002C0925 /* LaunchScreen.xib in Resources */,
 				1A4217F11A1819FF002C0925 /* blueBlock.png in Resources */,
+				1A4217F51A186089002C0925 /* blank.png in Resources */,
 				1A4217F21A1819FF002C0925 /* OR.png in Resources */,
 				1A4217D21A17E884002C0925 /* Images.xcassets in Resources */,
 				1A4217F01A1819FF002C0925 /* AND.png in Resources */,

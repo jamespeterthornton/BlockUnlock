@@ -60,7 +60,7 @@ class ComplexBlock : SKSpriteNode {
             //retrieving a size ~100px smaller than it should be... so
             // I'm just adding 100 px to it, lol.
             
-            super.init(texture: nil, color: UIColor.blueColor(), size: CGSize(width: UIScreen.mainScreen().bounds.width + 100 - marginSize, height: 100));
+            super.init(texture: nil, color: nil, size: CGSize(width: UIScreen.mainScreen().bounds.width + 115, height: 100));
 
             //Figure out how much space each block should take up
             
@@ -98,8 +98,8 @@ class ComplexBlock : SKSpriteNode {
                 sprite.yScale = self.frame.height/sprite.frame.height
                 sprite.anchorPoint = CGPointMake(0.0, 0.0);
                 sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame), CGRectGetMinY(self.frame));
-                xPlaceholder += sprite.frame.width;
-                self.addChild(sprite);
+                xPlaceholder += sprite.frame.width
+                self.addChild(sprite)
                 
             } else if let connector = object as? Connector {
                 
