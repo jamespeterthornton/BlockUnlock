@@ -37,7 +37,7 @@ class ComplexBlock : SKSpriteNode {
                 expressionSize += 1;
                 blockCount += 1
             } else if let connector = object as? Connector {
-                if connector.separator {
+                if !connector.simple {
                     expressionSize += 0.5;
                     separatorCount += 1;
                 }
@@ -103,7 +103,19 @@ class ComplexBlock : SKSpriteNode {
                 
             } else if let connector = object as? Connector {
                 
-                let sprite : SKSpriteNode = SKSpriteNode(imageNamed: connector.fixed ? connector.value : "Blank")
+                var connectorName : NSString;
+                
+                if connector.writable {
+                    connectorName = "Blank"
+                } else if connector.type == ConnectorType.and {
+                    connectorName = "AND"
+                } else if connector.type == ConnectorType.or {
+                    connectorName = "OR"
+                } else {
+                    connectorName = "XOR"
+                }
+                
+                let sprite : SKSpriteNode = SKSpriteNode(imageNamed:connectorName)
                 
                 sprite.xScale = separatorSize/sprite.frame.size.width
                 
@@ -111,7 +123,7 @@ class ComplexBlock : SKSpriteNode {
                 
                 sprite.zPosition = 1000;
                 
-                if connector.separator {
+                if !connector.simple {
                     
                     sprite.anchorPoint = CGPointMake(0.5, 0.5)
                     sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame) + separatorSize/2, CGRectGetMidY(self.frame))
@@ -125,25 +137,4 @@ class ComplexBlock : SKSpriteNode {
             }
         }
     }
-}
-
-class Connector: NSObject {
-    
-    let writeable: Bool
-    
-    let value: String
-    
-    let fixed: Bool
-    
-    let separator: Bool
-    
-    init(thisWriteable: Bool, thisValue: String, thisFixed: Bool, thisSeparator: Bool) {
-        
-        fixed = thisFixed
-        writeable = thisWriteable
-        value = thisValue
-        separator = thisSeparator
-        
-    }
-    
 }
