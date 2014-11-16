@@ -17,6 +17,7 @@ let targetHeight : CGFloat = 75
 var gameOver : Bool = false
 var score : Int = 0;
 
+
 class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -39,28 +40,31 @@ class GameScene: SKScene {
     }
     
     func evaluateTrue() {
+        
+        if (!gameOver) {
     
-        if targetSprites.count > 0 {
+            if targetSprites.count > 0 {
             
-            score += 1
+                score += 1
             
-            println("\(targetSprites.count)");
+                println("\(targetSprites.count)");
             
-            let block : ComplexBlock = blocks.removeAtIndex(0);
-            let target : Bool = targets.removeAtIndex(0);
-            let targetSprite : SKSpriteNode = targetSprites.removeAtIndex(0);
+                let block : ComplexBlock = blocks.removeAtIndex(0);
+                let target : Bool = targets.removeAtIndex(0);
+                let targetSprite : SKSpriteNode = targetSprites.removeAtIndex(0);
             
-            let moveAction = SKAction.moveTo(CGPointMake(targetSprite.position.x, targetSprite.position.y), duration: 0.3);
+                let moveAction = SKAction.moveTo(CGPointMake(targetSprite.position.x, targetSprite.position.y), duration: 0.3);
             
-            block.runAction(moveAction, completion: { () -> Void in
+                block.runAction(moveAction, completion: { () -> Void in
                 
-                block.hasExploded()
-                self.explode( block.position.x, y: block.position.y)
-                block.hidden = true
+                    block.hasExploded()
+                    self.explode( block.position.x, y: block.position.y)
+                    block.hidden = true
                 
             })
             
             addTarget(target)
+        }
         }
         
     }
@@ -125,31 +129,38 @@ class GameScene: SKScene {
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+        if (!gameOver) {
+            if (counter == 150){ counter = 0;}
+            if (counter == 0){ generateBlock();}
+            counter++;
         
-        if (counter == 150){ counter = 0;}
-        if (counter == 0){ generateBlock();}
-        counter++;
+            for sprite in blocks {
+                sprite.position.y -= 3;
+            }
         
-        for sprite in blocks {
-            sprite.position.y -= 3;
-        }
-        
-        if targetSprites.count > 0 && blocks.count > 0 {
-            if targetSprites[0].position.y == blocks[0].position.y {
+            if targetSprites.count > 0 && blocks.count > 0 {
+                if targetSprites[0].position.y == blocks[0].position.y {
                 
-                gameOver = true;
+                    gameOver = true;
+                    
+                    var button: Button = Button(defaultButtonImage: "restartbut1", activeButtonImage: "restartbut1_active", buttonAction: restart)
+
+                    let gameOverSprite : GameOverSprite = GameOverSprite (spriteSize: CGSize(width: 400.0, height: 400.0), restartBut: button)
                 
-                let gameOverSprite : GameOverSprite = GameOverSprite (spriteSize: CGSize(width: 200.0, height: 200.0))
+                    gameOverSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
                 
-                gameOverSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+                    gameOverSprite.zPosition = 1500
                 
-                gameOverSprite.zPosition = 1500
-                
-                self.addChild(gameOverSprite)
-                
-                
+                    self.addChild(gameOverSprite)
+                }
+            
             }
         }
+        
+    }
+    
+    func restart () {
+        self.removeAllChildren()
         
     }
 }

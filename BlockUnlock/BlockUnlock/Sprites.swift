@@ -165,21 +165,56 @@ class ComplexBlock : SKSpriteNode {
 
 class GameOverSprite : SKSpriteNode {
     
-    init (spriteSize : CGSize) {
+    init (spriteSize : CGSize, restartBut: Button) {
         
         let backgroundColor : UIColor = UIColor.blackColor().colorWithAlphaComponent(0.7);
-
         
         super.init(texture: nil, color: backgroundColor, size: spriteSize)
         
         let gameOverLabel : SKLabelNode = SKLabelNode()
-        gameOverLabel.fontSize = 50
-        gameOverLabel.text = "GAME OVER"
-        gameOverLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        var a = SKLabelNode()
+        a.text = "GAME OVER"
+        a.fontName = "Arial"
+        a.fontSize = 50
+        a.position = CGPointMake(gameOverLabel.position.x, gameOverLabel.position.y + 135)
+        
+        var b = SKLabelNode()
+        b.text = "Current"
+        b.fontSize = 40
+        b.position = CGPointMake(gameOverLabel.position.x, gameOverLabel.position.y + 75)
+        
+        var c = SKLabelNode()
+        c.text = "Liebowitz      99999"
+        c.fontName = "Arial"
+        c.fontSize = 30
+        c.position = CGPointMake(gameOverLabel.position.x, gameOverLabel.position.y + 35)
+        
+        var d = SKLabelNode()
+        d.text = "Best"
+        d.fontSize = 40
+        d.position = CGPointMake(gameOverLabel.position.x, gameOverLabel.position.y - 25)
+        
+        var e = SKLabelNode()
+        e.text = "Ricky Bobby     999999"
+        e.fontName = "Arial"
+        e.fontSize = 30
+        e.position = CGPointMake(gameOverLabel.position.x, gameOverLabel.position.y - 65)
+
+        restartBut.position = CGPointMake(gameOverLabel.position.x, gameOverLabel.position.y - 140)
+        
+        gameOverLabel.addChild(a)
+        gameOverLabel.addChild(b)
+        gameOverLabel.addChild(c)
+        gameOverLabel.addChild(d)
+        gameOverLabel.addChild(e)
+        gameOverLabel.addChild(restartBut)
+        
         self.addChild(gameOverLabel)
+        println("\(gameOverLabel.parent)")
     }
     
     required init(coder: NSCoder) {
         fatalError("NSCoding not supported")
     }
+    
 }

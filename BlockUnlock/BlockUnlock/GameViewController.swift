@@ -26,12 +26,15 @@ extension SKNode {
 }
 
 class GameViewController: UIViewController {
-
+    
+    var scene: GameScene!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         if let scene = GameScene.unarchiveFromFile("GameScene") as? GameScene {
             // Configure the view.
+            println("hellooooo")
             let skView = self.view as SKView
             skView.showsFPS = false
             skView.showsNodeCount = false
@@ -66,4 +69,6 @@ class GameViewController: UIViewController {
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
+    
+
 }
