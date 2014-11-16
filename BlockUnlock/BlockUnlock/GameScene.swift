@@ -36,38 +36,18 @@ class GameScene: SKScene {
         
         NSLog("Game scene width %@", self.frame.width);
         
+        let difficulty : Int = Int(arc4random()) % 5 + 1;
         
-        var complexBlock : ComplexBlock
-        let easyOrHarder : NSNumber = Double(arc4random()) % 3;
+        print("And the difficulty is...");
         
-        if (easyOrHarder == 0) {
-            let trueNum: NSNumber = Double(arc4random()) % 2;
-            let falseNum: NSNumber = Double(arc4random()) % 2;
-            let connector = Connector(thisWriteable: true, thisValue: "OR", thisFixed: false, thisSeparator: false);
-            let simpleArray: [NSObject] = [trueNum, connector, falseNum]
-            complexBlock = ComplexBlock(newValues: simpleArray, target: true);
-            complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
-        } else if easyOrHarder == 1 {
-            
-            let trueNum: NSNumber = Double(arc4random()) % 2;
-            let falseNum: NSNumber = Double(arc4random()) % 2;
-            let connector = Connector(thisWriteable: true, thisValue: "AND", thisFixed: false, thisSeparator: false);
-            let bigConnector = Connector(thisWriteable: true, thisValue: "AND", thisFixed: false, thisSeparator: true);
-            let simpleArray: [NSObject] = [trueNum, connector, falseNum, bigConnector, falseNum, connector, trueNum]
-            complexBlock = ComplexBlock(newValues: simpleArray, target: false);
-            complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
-            
-        } else {
-            
-            let trueNum: NSNumber = Double(arc4random()) % 2;
-            let falseNum: NSNumber = Double(arc4random()) % 2;
-            let connector = Connector(thisWriteable: true, thisValue: "AND", thisFixed: false, thisSeparator: false);
-            let bigConnector = Connector(thisWriteable: true, thisValue: "AND", thisFixed: true, thisSeparator: true);
-            let simpleArray: [NSObject] = [trueNum, connector, falseNum, bigConnector, falseNum, connector, trueNum, connector, falseNum, connector, trueNum]
-            complexBlock = ComplexBlock(newValues: simpleArray, target: true);
-            complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
-            
-        }
+        println("\(difficulty)");
+        
+        let simpleArray : GenericBlock = GenericBlock(difficulty: difficulty);
+
+        let complexBlock : ComplexBlock = ComplexBlock(newValues: simpleArray.toArray(), target: simpleArray.goal);
+        
+        complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
+        
         
         self.addChild(complexBlock)
         blocks.append(complexBlock)

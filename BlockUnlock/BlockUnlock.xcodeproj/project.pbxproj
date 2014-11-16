@@ -21,6 +21,7 @@
 		1A4217F21A1819FF002C0925 /* OR.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217EE1A1819FF002C0925 /* OR.png */; };
 		1A4217F31A1819FF002C0925 /* redBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217EF1A1819FF002C0925 /* redBlock.png */; };
 		1A4217F51A186089002C0925 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217F41A186089002C0925 /* blank.png */; };
+		1A51E0011A186B9000DA0A53 /* BlockGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A51E0001A186B9000DA0A53 /* BlockGeneration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		1A4217EE1A1819FF002C0925 /* OR.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OR.png; sourceTree = "<group>"; };
 		1A4217EF1A1819FF002C0925 /* redBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redBlock.png; sourceTree = "<group>"; };
 		1A4217F41A186089002C0925 /* blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blank.png; sourceTree = "<group>"; };
+		1A51E0001A186B9000DA0A53 /* BlockGeneration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockGeneration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 				1A4217CA1A17E884002C0925 /* GameScene.swift */,
 				1A4217CC1A17E884002C0925 /* GameViewController.swift */,
 				1A4217EA1A180722002C0925 /* Blocks.swift */,
+				1A51E0001A186B9000DA0A53 /* BlockGeneration.swift */,
 				1A4217CE1A17E884002C0925 /* Main.storyboard */,
 				1A4217D11A17E884002C0925 /* Images.xcassets */,
 				1A4217F41A186089002C0925 /* blank.png */,
@@ -246,6 +249,7 @@
 				1A4217EB1A180722002C0925 /* Blocks.swift in Sources */,
 				1A4217CD1A17E884002C0925 /* GameViewController.swift in Sources */,
 				1A4217C71A17E884002C0925 /* AppDelegate.swift in Sources */,
+				1A51E0011A186B9000DA0A53 /* BlockGeneration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
