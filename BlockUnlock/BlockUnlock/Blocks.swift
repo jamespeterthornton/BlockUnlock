@@ -27,7 +27,7 @@ class ComplexBlock : SKSpriteNode {
     * It can have NSNumbers (0 = False, 1 = True) or Connectors as elements
     */
     
-    init(newValues: [NSObject], makeWidth: CGFloat) {
+    init(newValues: [NSObject], target: Bool) {
         
         values = newValues;
         
@@ -54,13 +54,13 @@ class ComplexBlock : SKSpriteNode {
 
             placeBlocks(CGFloat(120));
             
-        } else if expressionSize < 6 {
+        } else if expressionSize < 7 {
         
             //Hack-a-thon exception: I don't know why the mainScreen() is 
             //retrieving a size ~100px smaller than it should be... so
             // I'm just adding 100 px to it, lol.
             
-            super.init(texture: nil, color: UIColor.blueColor(), size: CGSize(width: UIScreen.mainScreen().bounds.width + 100 - marginSize, height: 100));
+            super.init(texture: nil, color: nil, size: CGSize(width: UIScreen.mainScreen().bounds.width + 115, height: 100));
 
             //Figure out how much space each block should take up
             
@@ -98,12 +98,12 @@ class ComplexBlock : SKSpriteNode {
                 sprite.yScale = self.frame.height/sprite.frame.height
                 sprite.anchorPoint = CGPointMake(0.0, 0.0);
                 sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame), CGRectGetMinY(self.frame));
-                xPlaceholder += sprite.frame.width;
-                self.addChild(sprite);
+                xPlaceholder += sprite.frame.width
+                self.addChild(sprite)
                 
             } else if let connector = object as? Connector {
                 
-                let sprite : SKSpriteNode = SKSpriteNode(imageNamed: connector.value)
+                let sprite : SKSpriteNode = SKSpriteNode(imageNamed: connector.fixed ? connector.value : "Blank")
                 
                 sprite.xScale = separatorSize/sprite.frame.size.width
                 
