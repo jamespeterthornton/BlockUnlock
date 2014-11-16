@@ -4,7 +4,7 @@ import Foundation
 //Enum for different connectors, creates and array containing connectors which are
 //parsed from user or randomly generated ints
 enum ConnectorType {
-    case and, or, xor, blank
+    case xor, and, or, blank
     
     static let opOrder : [ConnectorType] = [blank, xor, and, or] // in order from lowest to highest
     
@@ -68,22 +68,17 @@ class Connector : NSObject {
     }
     
     //Returns false if object is not writable
-    func set_value(val:String) -> Bool {
+    func setType(val:String) -> Bool {
         if (!writable) {
             return false
         }
         
         switch (val) {
-        case "AND":
-            self.type = ConnectorType.and
-        case "OR":
-            self.type = ConnectorType.or
-        case "XOR":
-            self.type = ConnectorType.xor
-        case "Blank":
-            fallthrough
-        default:
-            self.type = ConnectorType.blank
+        case "AND":   type = ConnectorType.and
+        case "OR":    type = ConnectorType.or
+        case "XOR":   type = ConnectorType.xor
+        case "Blank": fallthrough
+        default:      type = ConnectorType.blank
         }
         return true
     }
@@ -94,6 +89,16 @@ class Connector : NSObject {
         case .or:  return "|"
         case .xor: return "x"
         case .blank: return " "
+        default: return "?"
+        }
+    }
+    
+    func getName() -> String {
+        switch type {
+        case .and: return "AND"
+        case .or:  return "OR"
+        case .xor: return "XOR"
+        case .blank: return "Blank"
         default: return "?"
         }
     }
@@ -112,9 +117,13 @@ class SimpleBlock {
     init (difficulty:Int) {
         for index in 0..<difficulty {
             // Booleans
-            booleans.append(Int(arc4random_uniform(2)))
+            if (index > 1 && booleans[index-1]==booleans[index-2]) { // no more than 2 same in a row
+                booleans.append(((booleans[index-1] as Int)+1) % 2)
+            } else {
+                booleans.append(Int(arc4random_uniform(2)))
+            }
             // Connectors
-            if (index != (difficulty-1)) {
+            if (index < (difficulty-1)) {
                 var write : Bool = (Int(arc4random_uniform(2)) == 1)
                 if (write) { //If connector is blank, insert randomely generated connector
                     connectors.append(Connector(type:ConnectorType.blank, writable:true, simple:true))
@@ -126,12 +135,15 @@ class SimpleBlock {
         }
         // Ensure some Connectors are writable
         connectors[Int(arc4random_uniform(UInt32(connectors.count)))].writable = true
+        
+        if (booleans.count == 2 && booleans[0] == 0 && booleans[1] == 0) {
+                booleans[Int(arc4random_uniform(2))] = 1
+        }
     }
     
     //Initialisation with value of connector
     init (t:String) {
         for (index, char) in enumerate(t) {
-            println("\(index/2):\(char)")
             if index%2 == 0 { // Boolean
                 booleans.append((char == "0") ? 0 : 1)
             } else { // Connector
@@ -140,7 +152,7 @@ class SimpleBlock {
         }
     }
     
-    //Returns 0 if false, 1 if true, and nil if blank
+    //Returns 0 if false, 1 if true, and nil if unknown
     func evaluate() -> Bool? {
         switch evaluateInt() {
         case 0: return false
@@ -152,18 +164,151 @@ class SimpleBlock {
     
     //Recursively evaluates generated block statement
     func evaluateInt() -> Int {
-        return evaluateRecursive(0, end:connectors.count-1, maxOpType:ConnectorType.opOrder.count-1)
+        return evaluateRecursive(0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
     }
     
     func evaluateRecursive(start:Int, end:Int, maxOpType:Int) -> Int {
         //If unary statement
         if (start == end) {
-            return booleans[start]
+            return booleans[start] as Int
         }
         
         //If statement is binary
         if (start == end-1) {
-            return operate(connectors[start], booleans[start], booleans[end])
+            return operate(connectors[start], booleans[start] as Int, booleans[end] as Int)
+        }
+        
+        //Int parses to corresponding operator type
+        var currentOpType : Int = maxOpType
+        var acted : Bool = false
+        
+        //Evaluates statement according to logical operators
+        while currentOpType > 0 { // skip blank op
+            for index in start..<end {
+                var op = connectors[index]
+                if (!op.isBlank() && op.isType(ConnectorType.opOrder[currentOpType])) {
+                    let resultA = evaluateRecursive(start, end:index, maxOpType:currentOpType)
+                    var result = operate(op, resultA, 2) // short circuit
+                    if (result != 2) { // result is knowable
+                        return result
+                    }
+                    result = operate(op, resultA, evaluateRecursive(index+1, end:end, maxOpType:currentOpType))
+                    if (result != 2) { // result is knowable
+                        return result
+                    }
+                    // else continue, look for all reasonable interpretations
+                }
+            }
+            currentOpType--;
+        }
+        return 2
+    }
+    
+    //Returns statement as array of objects
+    func toArray()->Array<NSObject>{
+        var arrayobj = Array<NSObject>()
+        for i in 0..<(booleans.count - 1){
+            arrayobj.append(booleans[i])
+            arrayobj.append(connectors[i])
+        }
+        arrayobj.append(booleans[booleans.count-1])
+        return arrayobj
+    }
+    
+    func getString() -> String {
+        var s : String = ""
+        for i in 0..<(connectors.count){
+            s += "\(booleans[i])"
+            s += connectors[i].getString()
+        }
+        s += "\(booleans[booleans.count-1])"
+        return s
+    }
+}
+
+extension Array {
+    mutating func shuffle() {
+        for i in 0..<(count - 1) {
+            let j = Int(arc4random_uniform(UInt32(count - i))) + i
+            swap(&self[i], &self[j])
+        }
+    }
+}
+
+/*Superblock consists of at least two simpleblocks*/
+class SuperBlock {
+    var connectors = [Connector]()
+    var blocks = [SimpleBlock]()
+    
+    //Initialized with difficulty level
+    init (difficulty:Int) {
+        // Cases: 3-3, 2-4, 4-2, 2-2-2
+        var numbers = [UInt32]()
+        if (difficulty == 6) {
+            switch (arc4random_uniform(8)) {
+            case 0:     numbers = [2, 2, 2]
+            case 1,2:   numbers = [2, 4]
+            case 3,4:   numbers = [4, 2]
+            case 5,6,7: fallthrough
+            default:    numbers = [3, 3]
+            }
+        } else {
+            var remaining = UInt32(difficulty)
+            if remaining < 4 {
+                remaining = 4
+            }
+            while remaining > 3 {
+                var next = (arc4random_uniform(remaining-3) % 3) + 2 // 2 to remaining-2 or 5
+                numbers.append(next)
+                remaining -= next
+            }
+            numbers.append(remaining)
+            numbers.shuffle()
+        }
+        for number in numbers {
+            blocks.append(SimpleBlock(difficulty:Int(number)))
+            if (blocks.count < numbers.count) {
+                connectors.append(Connector(type:(ConnectorType.randomType(true)), writable:(Int(arc4random_uniform(2)) == 1), simple:false))
+            }
+        }
+        for connector in connectors {
+            if connector.isWritable() {
+                connector.setType("Blank")
+            }
+        }
+        for block in blocks { // disable (FF) blocks
+            if (block.booleans.count == 2 && block.booleans[0] == 0 && block.booleans[1] == 0) {
+                if arc4random_uniform(100) > 0 { // ...most of the time
+                    block.booleans[Int(arc4random_uniform(2))] = 1
+                }
+            }
+        }
+    }
+    
+    //Returns 0 if false, 1 if true, and nil if unknown
+    func evaluate() -> Bool? {
+        switch evaluateInt() {
+        case 0: return false
+        case 1: return true
+        case 2: return nil
+        default: return nil
+        }
+    }
+    
+    //Recursively evaluates generated block statement
+    func evaluateInt() -> Int {
+        return evaluateRecursive(0, end:connectors.count, maxOpType:ConnectorType.opOrder.count-1)
+    }
+    
+    func evaluateRecursive(start:Int, end:Int, maxOpType:Int) -> Int {
+        //If unary statement
+        if (start == end) {
+            return blocks[start].evaluateInt()
+        }
+        
+        //If statement is binary
+        if (start == end-1) {
+            return operate(connectors[start], blocks[start].evaluateInt(), blocks[end].evaluateInt())
         }
         
         //Int parses to corresponding operator type
@@ -183,110 +328,30 @@ class SimpleBlock {
             }
             currentOpType--;
         }
-        
         return 2
     }
     
     //Returns statement as array of objects
-    func toArray()->Array<NSObject>{
+    func toArray() -> Array<NSObject> {
         var arrayobj = Array<NSObject>()
-        for i in 0..<(booleans.count - 1){
-            arrayobj.append(booleans[i])
+        for i in 0..<(blocks.count - 1) {
+            arrayobj += blocks[i].toArray()
             arrayobj.append(connectors[i])
         }
-        arrayobj.append(booleans[booleans.count-1])
+        arrayobj += blocks[blocks.count-1].toArray()
         return arrayobj
     }
     
     func getString() -> String {
         var s : String = ""
-        for i in 0..<(booleans.count - 1){
-            s += "\(booleans[i])"
+        for i in 0..<(connectors.count){
+            s += "(\(blocks[i].getString()))"
             s += connectors[i].getString()
         }
-        s += "\(booleans[booleans.count-1])"
+        s += "(\(blocks[blocks.count-1].getString()))"
         return s
     }
 }
-
-/*Superblock consists of at least two simpleblocks*/
-class SuperBlock {
-    var connector:Connector
-    var block1:SimpleBlock
-    var block2:SimpleBlock
-    
-    //Initialized with difficulty level
-    init (difficulty:Int) {
-        block1 = SimpleBlock(difficulty:difficulty/2)
-        block2 = SimpleBlock(difficulty:(difficulty - difficulty/2))
-        connector = Connector(type:(ConnectorType.randomType(true)), writable:(Int(arc4random_uniform(2)) == 1), simple:false)
-    }
-    
-    //Initialized with logical operator, and two simple blocks
-    init (c:Connector, b1:SimpleBlock, b2:SimpleBlock) {
-        connector = c
-        block1 = b1
-        block2 = b2
-    }
-    
-    func toArray()->Array<NSObject>{
-        var arrayobj = Array<NSObject>()
-        arrayobj += block1.toArray()
-        arrayobj.append(self.connector)
-        arrayobj += block2.toArray()
-        return arrayobj
-    }
-    
-    func getString() -> String {
-        return "(" + block1.getString() + ")" + connector.getString() + "(" + block2.getString() + ")"
-    }
-    
-    func evaluate() -> Bool? {
-        switch evaluateInt() {
-        case 0: return false
-        case 1: return true
-        case 2: return nil
-        default: return nil
-        }
-    }
-    
-    func evaluateInt() -> Int {
-        return operate(connector, block1.evaluateInt(), block2.evaluateInt())
-    }
-}
-
-class GenericBlock {
-    var goal : Bool
-    var isSuper : Bool
-    var superB : SuperBlock?
-    var simpleB : SimpleBlock?
-    
-    init (difficulty:Int) {
-        var status : Bool?
-        if difficulty > 4 {
-            superB = SuperBlock(difficulty: difficulty)
-            status = superB?.evaluate()
-            isSuper = true
-        } else {
-            simpleB = SimpleBlock(difficulty: difficulty)
-            status = simpleB?.evaluate()
-            isSuper = false
-        }
-        if status == nil {
-            goal = Int(arc4random_uniform(2)) == 1
-        } else {
-            goal = !status!
-        }    }
-    
-    func evaluate() -> Bool? {
-        return isSuper ? superB!.evaluate() : simpleB!.evaluate()
-    }
-    
-    func toArray() -> [NSObject] {
-        return isSuper ? superB!.toArray() : simpleB!.toArray()
-    }
-}
-
 
 //Parses statement to ints according to connectors and generated boolean values
 func operate(c:Connector, a:Int, b:Int) -> Int {
@@ -316,7 +381,70 @@ func operate(c:Connector, a:Int, b:Int) -> Int {
         } else {
             return 0
         }
+        /*  case .iff:
+        if (a == 2 || b == 2) {
+        return 2
+        } else if (a == b) {
+        return 1
+        } else {
+        return 0
+        }*/
     default: return 2
     }
 }
 
+/*
+* Wrapper class for blocks
+* Pass in length as "difficulty"
+*/
+class GenericBlock {
+    var goal : Bool
+    var isSuper : Bool
+    var superB : SuperBlock?
+    var simpleB : SimpleBlock?
+    
+    init (difficulty:Int) {
+        var status : Bool?
+        if difficulty > 4 {
+            superB = SuperBlock(difficulty: difficulty)
+            status = superB!.evaluate()
+            isSuper = true
+        } else {
+            simpleB = SimpleBlock(difficulty: difficulty)
+            status = simpleB!.evaluate()
+            isSuper = false
+        }
+        if status == nil {
+            goal = Int(arc4random_uniform(2)) == 1
+        } else {
+            goal = !status!
+        }    }
+    
+    func isSolved() -> Bool {
+        var status = evaluate()
+        
+        println("Is solved return this status:  \(status) compared to this goal: \(goal)")
+        
+        return status != nil && status! == goal
+    }
+    func evaluate() -> Bool? {
+        
+        let retValue = isSuper ? superB!.evaluate() : simpleB!.evaluate()
+        
+        println(getString())
+        
+        println("\(retValue)");
+        return isSuper ? superB!.evaluate() : simpleB!.evaluate()
+    }
+    func toArray() -> [NSObject] {
+        return isSuper ? superB!.toArray() : simpleB!.toArray()
+    }
+    func getString() -> String {
+        return isSuper ? superB!.getString() : simpleB!.getString()
+    }
+}
+
+/*
+var s = GenericBlock(difficulty:10)
+println(s.getString())
+*/
