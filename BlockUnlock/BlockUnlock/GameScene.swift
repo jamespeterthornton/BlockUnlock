@@ -18,7 +18,7 @@ class GameScene: SKScene {
         let myLabel = SKLabelNode(fontNamed:"Chalkduster")
         myLabel.text = "Hellooo, World!";
         myLabel.fontSize = 65;
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
+        myLabel.position = CGPoint(x:CGRectGetMinX(self.frame), y:CGRectGetMidY(self.frame));
         self.addChild(myLabel)
         
     }

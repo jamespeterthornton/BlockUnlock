@@ -11,19 +11,34 @@ import SpriteKit
 
 class ComplexBlock : SKSpriteNode {
     
+    /*
+    * Initialize the block with an array of values.
+    * The array will be used to construct the block. 
+    * It can have NSNumbers (0 = False, 1 = True) or Connectors as elements
+    */
+    
     init(values: [NSObject]) {
         
-        super.init(texture: nil, color: nil, size: CGSize(width: 100, height: 100));
+        super.init(texture: nil, color: UIColor.redColor(), size: CGSize(width: 100, height: 100));
+        
+        if (values.count == 3) {
+            
+            let sprite = SKSpriteNode(imageNamed: "RedBlock");
+            sprite.xScale = 0.5
+            sprite.yScale = 0.5
+            sprite.anchorPoint = CGPointMake(0.0, 0.0);
+            sprite.position = CGPointMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame));
+            
+            self.addChild(sprite);
+            
+        } else {
+            
+            assert(false, "Must provide 2, 4, or 6 arguments in ComplexBlock constructor array");
+            
+        }
         
         
-        let sprite = SKSpriteNode(imageNamed: "RedBlock");
-        
-        sprite.xScale = 0.5
-        sprite.yScale = 0.5
-        sprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
-        
-        
-        self.addChild(sprite);
+      
         
     }
     
