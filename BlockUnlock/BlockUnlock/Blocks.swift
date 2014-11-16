@@ -17,6 +17,7 @@ class ComplexBlock : SKSpriteNode {
     let expressionSize : Double = 0
     let blockCount : CGFloat = 0
     let separatorCount : CGFloat = 0
+    let blockHeight : CGFloat = 100
 
     
     var values : [NSObject]
@@ -41,26 +42,23 @@ class ComplexBlock : SKSpriteNode {
                     expressionSize += 0.5;
                     separatorCount += 1;
                 }
-                
             } else {
                 NSLog("Error: An element of the blocks value array was neither an NSNumber nor a Connector.");
             }
         }
         
-        
-        if expressionSize < 3 {
+  /*      if expressionSize < 3 {
             
-            super.init(texture: nil, color: UIColor.blueColor(), size: CGSize(width: 240, height: 100));
-
+            super.init(texture: nil, color: nil, size: CGSize(width: UIScreen.mainScreen().bounds.width + 115, height: 250));
             placeBlocks(CGFloat(120));
             
-        } else if expressionSize < 7 {
+        } else if expressionSize < 7 { */
         
             //Hack-a-thon exception: I don't know why the mainScreen() is 
             //retrieving a size ~100px smaller than it should be... so
             // I'm just adding 100 px to it, lol.
             
-            super.init(texture: nil, color: nil, size: CGSize(width: UIScreen.mainScreen().bounds.width + 115, height: 100));
+            super.init(texture: nil, color: nil, size: CGSize(width: UIScreen.mainScreen().bounds.width + 115, height: 250));
 
             //Figure out how much space each block should take up
             
@@ -72,10 +70,21 @@ class ComplexBlock : SKSpriteNode {
             
             placeBlocks(blockSize)
             
-        } else {
-            super.init(texture: nil, color: nil, size: CGSize(width: UIScreen.mainScreen().bounds.size.width, height: 100));
+ /*       } else {
+            super.init(texture: nil, color: UIColor.greenColor(), size: CGSize(width: UIScreen.mainScreen().bounds.size.width, height: 100));
             assert(false, "Must provide 2, 4, or 6 arguments in ComplexBlock constructor array");
-        }
+        } */
+        
+        let spriteColor : UIColor = target ? UIColor.blueColor() : UIColor.redColor()
+    
+        let targetSprite : SKSpriteNode = SKSpriteNode(texture: nil, color: spriteColor, size: CGSizeMake(self.frame.width, blockHeight))
+        
+        targetSprite.anchorPoint = CGPointMake(0.5, 1.0)
+        
+        targetSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame))
+        
+        self.addChild(targetSprite)
+        
     }
     
     required init(coder: NSCoder) {
@@ -95,7 +104,7 @@ class ComplexBlock : SKSpriteNode {
                 let sprite : SKSpriteNode = SKSpriteNode(imageNamed: blockType);
                 let xScale : CGFloat = CGFloat(blockSize / sprite.frame.width);
                 sprite.xScale = xScale;
-                sprite.yScale = self.frame.height/sprite.frame.height
+                sprite.yScale = blockHeight/sprite.frame.height
                 sprite.anchorPoint = CGPointMake(0.0, 0.0);
                 sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame), CGRectGetMinY(self.frame));
                 xPlaceholder += sprite.frame.width
@@ -126,12 +135,12 @@ class ComplexBlock : SKSpriteNode {
                 if !connector.simple {
                     
                     sprite.anchorPoint = CGPointMake(0.5, 0.5)
-                    sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame) + separatorSize/2, CGRectGetMidY(self.frame))
+                    sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame) + separatorSize/2, CGRectGetMinY(self.frame) + blockHeight/2)
                     xPlaceholder += separatorSize
                     
                 } else {
                     sprite.anchorPoint = CGPointMake(0.5, 0.5)
-                    sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame), CGRectGetMidY(self.frame))
+                    sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame), CGRectGetMinY(self.frame) + blockHeight/2)
                 }
                 self.addChild(sprite)
             }
