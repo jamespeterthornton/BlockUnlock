@@ -319,7 +319,6 @@ class GameScene: SKScene {
             println("\(targetSprites.count)");
             
             let block : ComplexBlock = blocks.removeAtIndex(0);
-            let target : Bool = targets.removeAtIndex(0);
             let targetSprite : SKSpriteNode = targetSprites.removeAtIndex(0);
             
             let moveAction = SKAction.moveTo(CGPointMake(targetSprite.position.x, targetSprite.position.y), duration: 0.3);
@@ -329,15 +328,24 @@ class GameScene: SKScene {
                 block.hasExploded()
                 self.explode( block.position.x, y: block.position.y)
                 block.hidden = true
+                targetSprite.removeFromParent()
                 
             })
             
-            addTarget(target)
+            
+            if targets.count > 0 {
+            
+                let target : Bool = targets.removeAtIndex(0);
+
+                addTarget(target)
+            }
         }
         
     }
     
     func addTarget(color : Bool) {
+        
+        println("Add target")
         
         let targetColor : UIColor = color ? UIColor.blueColor() : UIColor.redColor()
         
@@ -364,13 +372,11 @@ class GameScene: SKScene {
         self.addChild(complexBlock)
         blocks.append(complexBlock)
         
-        targets.append(newTarget);
-
-        
-        if (targets.count == 0) {
-            
+        if (targetSprites.count == 0) {
             addTarget(newTarget)
-        } 
+        } else {
+            targets.append(newTarget);
+        }
         
     }
     
