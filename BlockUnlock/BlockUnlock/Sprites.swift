@@ -23,15 +23,18 @@ class ComplexBlock : SKSpriteNode {
     var exploded : Bool = false;
     var values : [NSObject]
     
+    let block : GenericBlock!
+    
     /*
     * Initialize the block with an array of values.
     * The array will be used to construct the block. 
     * It can have NSNumbers (0 = False, 1 = True) or Connectors as elements
     */
     
-    init(newValues: [NSObject], target: Bool) {
+    init(thisBlock: GenericBlock) {
         
-        values = newValues;
+        values = thisBlock.toArray()
+        block = thisBlock
         
         for object in values {
             
@@ -88,7 +91,14 @@ class ComplexBlock : SKSpriteNode {
         
     }
     
-
+    func isSolved() -> Bool {
+        
+      //  if (block.iss)
+        
+        return false;
+        
+    }
+    
  
     func hasExploded(){
         self.exploded = true

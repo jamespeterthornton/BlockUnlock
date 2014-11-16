@@ -24,6 +24,9 @@
 		1A51E0011A186B9000DA0A53 /* BlockGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A51E0001A186B9000DA0A53 /* BlockGeneration.swift */; };
 		1A51E0041A189F4700DA0A53 /* greyBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A51E0021A189F4700DA0A53 /* greyBlock.png */; };
 		1A51E0051A189F4700DA0A53 /* redExplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1A51E0031A189F4700DA0A53 /* redExplosion.sks */; };
+		1A648F3B1A18B5D0002ED156 /* ThrowableConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A648F3A1A18B5D0002ED156 /* ThrowableConnector.swift */; };
+		1ABADF241A18C20600851B6C /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 1ABADF231A18C20600851B6C /* background.png */; };
+		1ABADF261A18C20F00851B6C /* XOR.png in Resources */ = {isa = PBXBuildFile; fileRef = 1ABADF251A18C20F00851B6C /* XOR.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +61,9 @@
 		1A51E0001A186B9000DA0A53 /* BlockGeneration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockGeneration.swift; sourceTree = "<group>"; };
 		1A51E0021A189F4700DA0A53 /* greyBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = greyBlock.png; sourceTree = "<group>"; };
 		1A51E0031A189F4700DA0A53 /* redExplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = redExplosion.sks; sourceTree = "<group>"; };
+		1A648F3A1A18B5D0002ED156 /* ThrowableConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThrowableConnector.swift; sourceTree = "<group>"; };
+		1ABADF231A18C20600851B6C /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		1ABADF251A18C20F00851B6C /* XOR.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = XOR.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,11 +112,14 @@
 				1A4217CC1A17E884002C0925 /* GameViewController.swift */,
 				1A4217EA1A180722002C0925 /* Sprites.swift */,
 				1A51E0001A186B9000DA0A53 /* BlockGeneration.swift */,
+				1A648F3A1A18B5D0002ED156 /* ThrowableConnector.swift */,
 				1A4217CE1A17E884002C0925 /* Main.storyboard */,
 				1A4217D11A17E884002C0925 /* Images.xcassets */,
 				1A4217F41A186089002C0925 /* blank.png */,
 				1A4217EC1A1819FF002C0925 /* AND.png */,
 				1A4217ED1A1819FF002C0925 /* blueBlock.png */,
+				1ABADF231A18C20600851B6C /* background.png */,
+				1ABADF251A18C20F00851B6C /* XOR.png */,
 				1A51E0021A189F4700DA0A53 /* greyBlock.png */,
 				1A4217EE1A1819FF002C0925 /* OR.png */,
 				1A4217EF1A1819FF002C0925 /* redBlock.png */,
@@ -226,7 +235,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A51E0041A189F4700DA0A53 /* greyBlock.png in Resources */,
+				1ABADF241A18C20600851B6C /* background.png in Resources */,
 				1A4217D51A17E884002C0925 /* LaunchScreen.xib in Resources */,
+				1ABADF261A18C20F00851B6C /* XOR.png in Resources */,
 				1A4217F11A1819FF002C0925 /* blueBlock.png in Resources */,
 				1A4217F51A186089002C0925 /* blank.png in Resources */,
 				1A4217F21A1819FF002C0925 /* OR.png in Resources */,
@@ -253,6 +264,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A648F3B1A18B5D0002ED156 /* ThrowableConnector.swift in Sources */,
 				1A4217CB1A17E884002C0925 /* GameScene.swift in Sources */,
 				1A4217EB1A180722002C0925 /* Sprites.swift in Sources */,
 				1A4217CD1A17E884002C0925 /* GameViewController.swift in Sources */,
