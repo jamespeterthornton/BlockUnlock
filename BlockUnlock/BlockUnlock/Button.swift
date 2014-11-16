@@ -59,5 +59,6 @@ class Button: SKNode {
         
         activeButton.hidden = true
         defaultButton.hidden = false
+        println("\(self.parent)")
     }
 }

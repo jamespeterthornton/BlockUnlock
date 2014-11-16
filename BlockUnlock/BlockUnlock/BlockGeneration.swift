@@ -219,27 +219,27 @@ class SimpleBlock {
             for index in start..<end {
                 var op = connectors[index]
                 if (op.isWritable() || op.isType(ConnectorType.opOrder[currentOpType])) {
-                    let aFalsable = evaluateToRecursive(false, start:start, end:index, maxOpType:currentOpType)
-                    let aTruable =  evaluateToRecursive(true,  start:start, end:index, maxOpType:currentOpType)
-                    let bFalsable = evaluateToRecursive(false, start:index+1, end:end, maxOpType:currentOpType)
-                    let bTruable =  evaluateToRecursive(true,  start:index+1, end:end, maxOpType:currentOpType)
+                    let aFalsable = evaluateToRecursive(0, start:start, end:index, maxOpType:currentOpType)
+                    let aTruable =  evaluateToRecursive(1,  start:start, end:index, maxOpType:currentOpType)
+                    let bFalsable = evaluateToRecursive(0, start:index+1, end:end, maxOpType:currentOpType)
+                    let bTruable =  evaluateToRecursive(1,  start:index+1, end:end, maxOpType:currentOpType)
                     switch ConnectorType.opOrder[currentOpType] {
                     case .and:
-                        if (goal == true && (aTruable && bTruable)) {
+                        if (goal == 1 && (aTruable && bTruable)) {
                             return true
-                        } else if (goal == false && (aFalsable || bFalsable)) {
+                        } else if (goal == 0 && (aFalsable || bFalsable)) {
                             return true
                         }
                     case .or:
-                        if (goal == true && (aTruable || bTruable)) {
+                        if (goal == 1 && (aTruable || bTruable)) {
                             return true
-                        } else if (goal == false && (aFalsable && bFalsable)) {
+                        } else if (goal == 0 && (aFalsable && bFalsable)) {
                             return true
                         }
                     case .xor:
-                        if (goal == true && ((aTruable && bFalsable) || (aFalsable && bTruable))) {
+                        if (goal == 1 && ((aTruable && bFalsable) || (aFalsable && bTruable))) {
                             return true
-                        } else if (goal == false && ((aTruable && bTruable) || (aFalsable && bFalsable))) {
+                        } else if (goal == 0 && ((aTruable && bTruable) || (aFalsable && bFalsable))) {
                             return true
                         }
                     default:
@@ -413,27 +413,27 @@ class SuperBlock {
             for index in start..<end {
                 var op = connectors[index]
                 if (op.isWritable() || op.isType(ConnectorType.opOrder[currentOpType])) {
-                    let aFalsable = evaluateToRecursive(false, start:start, end:index, maxOpType:currentOpType)
-                    let aTruable =  evaluateToRecursive(true,  start:start, end:index, maxOpType:currentOpType)
-                    let bFalsable = evaluateToRecursive(false, start:index+1, end:end, maxOpType:currentOpType)
-                    let bTruable =  evaluateToRecursive(true,  start:index+1, end:end, maxOpType:currentOpType)
+                    let aFalsable = evaluateToRecursive(0, start:start, end:index, maxOpType:currentOpType)
+                    let aTruable =  evaluateToRecursive(1,  start:start, end:index, maxOpType:currentOpType)
+                    let bFalsable = evaluateToRecursive(0, start:index+1, end:end, maxOpType:currentOpType)
+                    let bTruable =  evaluateToRecursive(1,  start:index+1, end:end, maxOpType:currentOpType)
                     switch ConnectorType.opOrder[currentOpType] {
                     case .and:
-                        if (goal == true && (aTruable && bTruable)) {
+                        if (goal == 1 && (aTruable && bTruable)) {
                             return true
-                        } else if (goal == false && (aFalsable || bFalsable)) {
+                        } else if (goal == 0 && (aFalsable || bFalsable)) {
                             return true
                         }
                     case .or:
-                        if (goal == true && (aTruable || bTruable)) {
+                        if (goal == 1 && (aTruable || bTruable)) {
                             return true
-                        } else if (goal == false && (aFalsable && bFalsable)) {
+                        } else if (goal == 0 && (aFalsable && bFalsable)) {
                             return true
                         }
                     case .xor:
-                        if (goal == true && ((aTruable && bFalsable) || (aFalsable && bTruable))) {
+                        if (goal == 1 && ((aTruable && bFalsable) || (aFalsable && bTruable))) {
                             return true
-                        } else if (goal == false && ((aTruable && bTruable) || (aFalsable && bFalsable))) {
+                        } else if (goal == 0 && ((aTruable && bTruable) || (aFalsable && bFalsable))) {
                             return true
                         }
                     default:

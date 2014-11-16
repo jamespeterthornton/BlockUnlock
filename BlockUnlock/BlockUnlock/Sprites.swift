@@ -227,3 +227,37 @@ class GameOverSprite : SKSpriteNode {
     }
     
 }
+
+class BeginGameSprite : SKSpriteNode {
+    
+    init (spriteSize : CGSize, beginBut: Button) {
+        
+        let backgroundColor : UIColor = UIColor.grayColor().colorWithAlphaComponent(0.5);
+        
+        super.init(texture: nil, color: backgroundColor, size: spriteSize)
+        
+        let BeginGameLabel : SKLabelNode = SKLabelNode()
+        var a1 = SKLabelNode()
+        a1.text = "MENU"
+        a1.fontName = "Arial"
+        a1.fontSize = 50
+        a1.position = CGPointMake(BeginGameLabel.position.x, BeginGameLabel.position.y + 135)
+        
+        beginBut.position = CGPointMake(BeginGameLabel.position.x, BeginGameLabel.position.y - 10)
+        
+        //highBut.position = CGPointMake(BeginGameLabel.position.x, BeginGameLabel.position.y - 140)
+        
+        BeginGameLabel.addChild(a1)
+        BeginGameLabel.addChild(beginBut)
+        //BeginGameLabel.addChild(highBut)
+    
+        
+        self.addChild(BeginGameLabel)
+        println(5)
+    }
+    
+    required init(coder: NSCoder) {
+        fatalError("NSCoding not supported")
+    }
+    
+}
