@@ -20,6 +20,7 @@ class GameScene: SKScene {
         myLabel.fontSize = 65;
         myLabel.position = CGPoint(x:CGRectGetMinX(self.frame), y:CGRectGetMidY(self.frame));
         self.addChild(myLabel)
+        println("WIDTH IS: \(self.frame.width.description)")
         
     }
 
@@ -33,18 +34,33 @@ class GameScene: SKScene {
     
     func generateBlock () {
         
-        let trueNum: NSNumber = 1;
-        let falseNum: NSNumber = 0;
-        let connector = Connector(thisWriteable: true, thisValue: "OR");
-        let simpleArray: [NSObject] = [trueNum, falseNum, connector]
+        NSLog("Game scene width %@", self.frame.width);
         
-        let complexBlock = ComplexBlock(values: simpleArray);
         
-        complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
+        var complexBlock : ComplexBlock
+        let easyOrHarder : NSNumber = Double(arc4random()) % 2;
         
-        self.addChild(complexBlock);
+        if (easyOrHarder == 0) {
+            let trueNum: NSNumber = Double(arc4random()) % 2;
+            let falseNum: NSNumber = Double(arc4random()) % 2;
+            let connector = Connector(thisWriteable: true, thisValue: "OR", thisFixed: true, thisSeparator: false);
+            let simpleArray: [NSObject] = [trueNum, connector, falseNum]
+            complexBlock = ComplexBlock(newValues: simpleArray, makeWidth: self.frame.width);
+            complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
+        } else {
+            
+            let trueNum: NSNumber = Double(arc4random()) % 2;
+            let falseNum: NSNumber = Double(arc4random()) % 2;
+            let connector = Connector(thisWriteable: true, thisValue: "AND", thisFixed: true, thisSeparator: false);
+            let bigConnector = Connector(thisWriteable: true, thisValue: "AND", thisFixed: true, thisSeparator: true);
+            let simpleArray: [NSObject] = [trueNum, connector, falseNum, bigConnector, falseNum, connector, trueNum]
+            complexBlock = ComplexBlock(newValues: simpleArray, makeWidth: self.frame.width);
+            complexBlock.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
+            
+        }
         
-        blocks.append(complexBlock);
+        self.addChild(complexBlock)
+        blocks.append(complexBlock)
 
     }
    
