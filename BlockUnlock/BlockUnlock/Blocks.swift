@@ -17,7 +17,11 @@ class ComplexBlock : SKSpriteNode {
     let expressionSize : Double = 0
     let blockCount : CGFloat = 0
     let separatorCount : CGFloat = 0
-    let blockHeight : CGFloat = 100
+    let blockHeight : CGFloat = 75
+
+    var sprites : [SKSpriteNode] = []
+
+    var exploded : Bool = false;
 
     
     var values : [NSObject]
@@ -58,7 +62,7 @@ class ComplexBlock : SKSpriteNode {
             //retrieving a size ~100px smaller than it should be... so
             // I'm just adding 100 px to it, lol.
             
-            super.init(texture: nil, color: nil, size: CGSize(width: UIScreen.mainScreen().bounds.width + 115, height: 250));
+            super.init(texture: nil, color: nil, size: CGSize(width: UIScreen.mainScreen().bounds.width + 115, height: blockHeight));
 
             //Figure out how much space each block should take up
             
@@ -75,7 +79,7 @@ class ComplexBlock : SKSpriteNode {
             assert(false, "Must provide 2, 4, or 6 arguments in ComplexBlock constructor array");
         } */
         
-        let spriteColor : UIColor = target ? UIColor.blueColor() : UIColor.redColor()
+   /*     let spriteColor : UIColor = target ? UIColor.blueColor() : UIColor.redColor()
     
         let targetSprite : SKSpriteNode = SKSpriteNode(texture: nil, color: spriteColor, size: CGSizeMake(self.frame.width, blockHeight))
         
@@ -83,7 +87,7 @@ class ComplexBlock : SKSpriteNode {
         
         targetSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame))
         
-        self.addChild(targetSprite)
+        self.addChild(targetSprite) */
         
     }
     
@@ -91,6 +95,10 @@ class ComplexBlock : SKSpriteNode {
         fatalError("NSCoding not supported")
     }
  
+    func hasExploded(){
+        self.exploded = true
+    }
+    
     func placeBlocks (blockSize : CGFloat) {
         
         var xPlaceholder : CGFloat = 0;
@@ -143,7 +151,15 @@ class ComplexBlock : SKSpriteNode {
                     sprite.position = CGPointMake(xPlaceholder + CGRectGetMinX(self.frame), CGRectGetMinY(self.frame) + blockHeight/2)
                 }
                 self.addChild(sprite)
+                sprites.append(sprite)
             }
         }
     }
+    
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        
+        NSLog("Touch!!!!");
+        
+    }
+    
 }

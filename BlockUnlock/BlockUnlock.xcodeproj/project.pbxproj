@@ -22,6 +22,8 @@
 		1A4217F31A1819FF002C0925 /* redBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217EF1A1819FF002C0925 /* redBlock.png */; };
 		1A4217F51A186089002C0925 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4217F41A186089002C0925 /* blank.png */; };
 		1A51E0011A186B9000DA0A53 /* BlockGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A51E0001A186B9000DA0A53 /* BlockGeneration.swift */; };
+		1A51E0041A189F4700DA0A53 /* greyBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A51E0021A189F4700DA0A53 /* greyBlock.png */; };
+		1A51E0051A189F4700DA0A53 /* redExplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1A51E0031A189F4700DA0A53 /* redExplosion.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,8 @@
 		1A4217EF1A1819FF002C0925 /* redBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redBlock.png; sourceTree = "<group>"; };
 		1A4217F41A186089002C0925 /* blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blank.png; sourceTree = "<group>"; };
 		1A51E0001A186B9000DA0A53 /* BlockGeneration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockGeneration.swift; sourceTree = "<group>"; };
+		1A51E0021A189F4700DA0A53 /* greyBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = greyBlock.png; sourceTree = "<group>"; };
+		1A51E0031A189F4700DA0A53 /* redExplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = redExplosion.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +101,7 @@
 			children = (
 				1A4217C61A17E884002C0925 /* AppDelegate.swift */,
 				1A4217C81A17E884002C0925 /* GameScene.sks */,
+				1A51E0031A189F4700DA0A53 /* redExplosion.sks */,
 				1A4217CA1A17E884002C0925 /* GameScene.swift */,
 				1A4217CC1A17E884002C0925 /* GameViewController.swift */,
 				1A4217EA1A180722002C0925 /* Blocks.swift */,
@@ -106,6 +111,7 @@
 				1A4217F41A186089002C0925 /* blank.png */,
 				1A4217EC1A1819FF002C0925 /* AND.png */,
 				1A4217ED1A1819FF002C0925 /* blueBlock.png */,
+				1A51E0021A189F4700DA0A53 /* greyBlock.png */,
 				1A4217EE1A1819FF002C0925 /* OR.png */,
 				1A4217EF1A1819FF002C0925 /* redBlock.png */,
 				1A4217D31A17E884002C0925 /* LaunchScreen.xib */,
@@ -219,10 +225,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A51E0041A189F4700DA0A53 /* greyBlock.png in Resources */,
 				1A4217D51A17E884002C0925 /* LaunchScreen.xib in Resources */,
 				1A4217F11A1819FF002C0925 /* blueBlock.png in Resources */,
 				1A4217F51A186089002C0925 /* blank.png in Resources */,
 				1A4217F21A1819FF002C0925 /* OR.png in Resources */,
+				1A51E0051A189F4700DA0A53 /* redExplosion.sks in Resources */,
 				1A4217D21A17E884002C0925 /* Images.xcassets in Resources */,
 				1A4217F01A1819FF002C0925 /* AND.png in Resources */,
 				1A4217F31A1819FF002C0925 /* redBlock.png in Resources */,
