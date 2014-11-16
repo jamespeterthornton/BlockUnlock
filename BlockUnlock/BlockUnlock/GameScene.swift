@@ -14,6 +14,8 @@ var targetSprites : [SKSpriteNode] = []
 var counter: Int = 0
 let controlsHeight : CGFloat = 150
 let targetHeight : CGFloat = 75
+var gameOver : Bool = false
+var score : Int = 0;
 
 class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
@@ -40,6 +42,8 @@ class GameScene: SKScene {
     
         if targetSprites.count > 0 {
             
+            score += 1
+            
             println("\(targetSprites.count)");
             
             let block : ComplexBlock = blocks.removeAtIndex(0);
@@ -48,11 +52,13 @@ class GameScene: SKScene {
             
             let moveAction = SKAction.moveTo(CGPointMake(targetSprite.position.x, targetSprite.position.y), duration: 0.3);
             
-            block.runAction(moveAction)
-            
-            block.hasExploded()
-            explode( block.position.x, y: block.position.y)
-            block.hidden = true
+            block.runAction(moveAction, completion: { () -> Void in
+                
+                block.hasExploded()
+                self.explode( block.position.x, y: block.position.y)
+                block.hidden = true
+                
+            })
             
             addTarget(target)
         }
@@ -63,7 +69,7 @@ class GameScene: SKScene {
         
         let targetColor : UIColor = color ? UIColor.blueColor() : UIColor.redColor()
         
-        let newTargetNode = SKSpriteNode(texture: nil, color: targetColor, size: CGSizeMake(self.frame.width, targetHeight))
+        let newTargetNode = SKSpriteNode(texture: nil, color: targetColor.colorWithAlphaComponent(0.7), size: CGSizeMake(self.frame.width, targetHeight))
         
         newTargetNode.position.x = CGRectGetMidX(self.frame);
         newTargetNode.position.y = CGRectGetMinY(self.frame) + controlsHeight
@@ -129,9 +135,19 @@ class GameScene: SKScene {
         if targetSprites.count > 0 && blocks.count > 0 {
             if targetSprites[0].position.y == blocks[0].position.y {
                 
-                println("Game over, bitch.");
+                gameOver = true;
+                
+                let gameOverSprite : GameOverSprite = GameOverSprite (spriteSize: CGSize(width: 200.0, height: 200.0))
+                
+                gameOverSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+                
+                gameOverSprite.zPosition = 1500
+                
+                self.addChild(gameOverSprite)
+                
                 
             }
         }
+        
     }
 }
