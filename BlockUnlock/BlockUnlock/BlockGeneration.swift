@@ -74,13 +74,13 @@ class Connector : NSObject {
         }
         
         switch (val) {
-        case "and":
+        case "AND":
             self.type = ConnectorType.and
-        case "or":
+        case "OR":
             self.type = ConnectorType.or
-        case "xor":
+        case "XOR":
             self.type = ConnectorType.xor
-        case "blank":
+        case "Blank":
             fallthrough
         default:
             self.type = ConnectorType.blank
